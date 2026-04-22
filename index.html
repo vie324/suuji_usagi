@@ -188,26 +188,46 @@
 <body>
 <div id="app"></div>
  
-<script type="text/babel" src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.development.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.development.min.js"></script>
+<script crossorigin src="https://unpkg.com/react@18.2.0/umd/react.production.min.js"></script>
+<script crossorigin src="https://unpkg.com/react-dom@18.2.0/umd/react-dom.production.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.6/babel.min.js"></script>
  
 <script type="text/babel">
 const { useState, useEffect, useRef } = React;
  
-// ======== 数字データ ========
-const NUMBERS = [
-  { digit: 1,  kanji: '一', hira: 'いち',   color: '#FFB5D8', bgSoft: '#FFE8F3' },
-  { digit: 2,  kanji: '二', hira: 'に',     color: '#FFCBA4', bgSoft: '#FFEEDD' },
-  { digit: 3,  kanji: '三', hira: 'さん',   color: '#FFE27A', bgSoft: '#FFF6D1' },
-  { digit: 4,  kanji: '四', hira: 'よん',   color: '#B8E986', bgSoft: '#E8F7D5' },
-  { digit: 5,  kanji: '五', hira: 'ご',     color: '#8EE1C8', bgSoft: '#D6F3EA' },
-  { digit: 6,  kanji: '六', hira: 'ろく',   color: '#A8D8F0', bgSoft: '#DEF0FA' },
-  { digit: 7,  kanji: '七', hira: 'なな',   color: '#B8B5FF', bgSoft: '#E5E3FF' },
-  { digit: 8,  kanji: '八', hira: 'はち',   color: '#E0A8E8', bgSoft: '#F3DEF7' },
-  { digit: 9,  kanji: '九', hira: 'きゅう', color: '#FFA8B8', bgSoft: '#FFDDE3' },
-  { digit: 10, kanji: '十', hira: 'じゅう', color: '#FFD166', bgSoft: '#FFEFC7' },
+// ======== 数字データ（1〜100） ========
+const PALETTE = [
+  { color: '#FFB5D8', bgSoft: '#FFE8F3' },
+  { color: '#FFCBA4', bgSoft: '#FFEEDD' },
+  { color: '#FFE27A', bgSoft: '#FFF6D1' },
+  { color: '#B8E986', bgSoft: '#E8F7D5' },
+  { color: '#8EE1C8', bgSoft: '#D6F3EA' },
+  { color: '#A8D8F0', bgSoft: '#DEF0FA' },
+  { color: '#B8B5FF', bgSoft: '#E5E3FF' },
+  { color: '#E0A8E8', bgSoft: '#F3DEF7' },
+  { color: '#FFA8B8', bgSoft: '#FFDDE3' },
+  { color: '#FFD166', bgSoft: '#FFEFC7' },
 ];
+const DIGIT_HIRA  = ['', 'いち', 'に', 'さん', 'よん', 'ご', 'ろく', 'なな', 'はち', 'きゅう'];
+const TENS_HIRA   = ['', 'じゅう', 'にじゅう', 'さんじゅう', 'よんじゅう', 'ごじゅう', 'ろくじゅう', 'ななじゅう', 'はちじゅう', 'きゅうじゅう'];
+const DIGIT_KANJI = ['', '一', '二', '三', '四', '五', '六', '七', '八', '九'];
+const TENS_KANJI  = ['', '十', '二十', '三十', '四十', '五十', '六十', '七十', '八十', '九十'];
+
+const NUMBERS = Array.from({ length: 100 }, (_, i) => {
+  const n = i + 1;
+  let hira, kanji;
+  if (n === 100) {
+    hira = 'ひゃく';
+    kanji = '百';
+  } else {
+    const tens = Math.floor(n / 10);
+    const ones = n % 10;
+    hira  = TENS_HIRA[tens]  + DIGIT_HIRA[ones];
+    kanji = TENS_KANJI[tens] + DIGIT_KANJI[ones];
+  }
+  const p = PALETTE[i % PALETTE.length];
+  return { digit: n, kanji, hira, color: p.color, bgSoft: p.bgSoft };
+});
  
 // ======== 音声 ========
 let jaVoice = null;
@@ -384,17 +404,26 @@ function CountMode({ onBack }) {
   const [bunnies, setBunnies] = useState([]);
   const [celebrate, setCelebrate] = useState(false);
  
+  const GOAL = 100;
   const addBunny = () => {
-    if (count >= 10) return;
+    if (count >= GOAL) return;
     const newCount = count + 1;
     setCount(newCount);
     setBunnies(prev => [...prev, { id: Date.now() + Math.random(), n: newCount }]);
     playChime('pop');
     speak(NUMBERS[newCount - 1].hira, 0.9, 1.4);
-    if (newCount === 10) {
+    // 10の倍数で小さな応援
+    if (newCount % 10 === 0 && newCount !== GOAL) {
+      setTimeout(() => {
+        playChime('success');
+        speak(`${NUMBERS[newCount - 1].hira}！いいね！`, 0.9, 1.35);
+      }, 500);
+    }
+    // ゴール到達で大きなお祝い
+    if (newCount === GOAL) {
       setTimeout(() => {
         setCelebrate(true); playChime('success');
-        setTimeout(() => speak('じゅっぴき！すごいね！', 0.9, 1.35), 600);
+        setTimeout(() => speak('ひゃっぴき！すごいね！', 0.9, 1.35), 600);
       }, 700);
     }
   };
@@ -408,6 +437,7 @@ function CountMode({ onBack }) {
         <div className="big-number" style={{
           color: count > 0 ? NUMBERS[count - 1].color : '#D0C5E0',
           transform: count > 0 ? 'scale(1)' : 'scale(0.85)',
+          fontSize: count >= 100 ? '5.5rem' : count >= 10 ? '6.2rem' : '7rem',
         }}>{count}</div>
         <div style={{ fontWeight: 900, fontSize: '1.8rem', color: '#3A3052', marginTop: '-6px' }}>
           {count > 0 ? NUMBERS[count - 1].hira : '　'}
@@ -423,11 +453,20 @@ function CountMode({ onBack }) {
         ))}
       </div>
       <div className="action-fixed">
-        {count < 10 ? (
-          <button className="big-pill" onClick={addBunny}
-            style={{ background: '#FF8FB5', color: '#fff', textShadow: '2px 2px 0 #3A3052' }}>
-            🐰 うさぎを よぶ
-          </button>
+        {count < GOAL ? (
+          <div className="flex-col-center" style={{ gap: '8px', width: '100%' }}>
+            <button className="big-pill" onClick={addBunny}
+              style={{ background: '#FF8FB5', color: '#fff', textShadow: '2px 2px 0 #3A3052' }}>
+              🐰 うさぎを よぶ（{count} / {GOAL}）
+            </button>
+            {count > 0 && (
+              <button onClick={reset} style={{
+                padding: '6px 18px', borderRadius: '999px',
+                background: '#fff', border: '3px solid #3A3052', boxShadow: '0 3px 0 #3A3052',
+                fontWeight: 900, fontSize: '0.85rem', color: '#3A3052',
+              }}>↩ さいしょから</button>
+            )}
+          </div>
         ) : (
           <button className="big-pill" onClick={reset}
             style={{ background: '#8EE1C8', color: '#3A3052' }}>
