@@ -1,0 +1,879 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="default" />
+<meta name="apple-mobile-web-app-title" content="すうじのもり" />
+<title>すうじのもり 🐰</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;700;900&family=Fredoka:wght@500;700&display=swap">
+<style>
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body {
+    margin: 0; padding: 0; height: 100%; overflow: hidden;
+    font-family: 'M PLUS Rounded 1c', sans-serif;
+    user-select: none; -webkit-user-select: none;
+    touch-action: manipulation;
+    overscroll-behavior: none;
+  }
+  #app { width: 100%; height: 100vh; overflow-y: auto; overflow-x: hidden; }
+  button { font-family: inherit; cursor: pointer; }
+ 
+  /* ===== キーフレーム ===== */
+  @keyframes floaty {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+  }
+  @keyframes popIn {
+    0% { transform: scale(0); opacity: 0; }
+    60% { transform: scale(1.1); opacity: 1; }
+    100% { transform: scale(1); opacity: 1; }
+  }
+  @keyframes hopIn {
+    0% { transform: translateY(-30px) scale(0.5); opacity: 0; }
+    60% { transform: translateY(5px) scale(1.1); opacity: 1; }
+    100% { transform: translateY(0) scale(1); opacity: 1; }
+  }
+  @keyframes sparkleAnim {
+    0% { transform: scale(0) rotate(0deg); opacity: 0; }
+    30% { transform: scale(1.3) rotate(180deg); opacity: 1; }
+    100% { transform: scale(0.6) rotate(360deg) translateY(-30px); opacity: 0; }
+  }
+  @keyframes cheer {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    25% { transform: translateY(-10px) rotate(-5deg); }
+    75% { transform: translateY(-10px) rotate(5deg); }
+  }
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-8px); }
+    75% { transform: translateX(8px); }
+  }
+  @keyframes slideUp {
+    from { transform: translateY(30px); opacity: 0; }
+    to   { transform: translateY(0); opacity: 1; }
+  }
+ 
+  /* ===== 共通 ===== */
+  .screen { min-height: 100vh; width: 100%; position: relative; padding: 16px 16px 32px; }
+  .back-btn {
+    position: absolute; top: 14px; left: 14px; z-index: 20;
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 10px 16px; background: #fff; border-radius: 999px;
+    border: 3px solid #3A3052; box-shadow: 0 3px 0 #3A3052;
+    font-weight: 900; color: #3A3052; font-size: 15px;
+  }
+  .back-btn:active { transform: translateY(2px); box-shadow: 0 1px 0 #3A3052; }
+  .title { font-weight: 900; color: #3A3052; text-align: center; letter-spacing: 0.03em; }
+  .subtitle { font-weight: 700; color: #7A6B94; text-align: center; }
+  .bubble-box {
+    background: #fff; border: 4px solid #3A3052;
+    border-radius: 24px; box-shadow: 0 5px 0 #3A3052;
+    padding: 10px 20px; position: relative;
+  }
+  .bubble-tri::before {
+    content: ''; position: absolute; top: -14px; left: 44%;
+    border-left: 10px solid transparent; border-right: 10px solid transparent;
+    border-bottom: 14px solid #3A3052;
+  }
+  .bubble-tri::after {
+    content: ''; position: absolute; top: -10px; left: 45%;
+    border-left: 8px solid transparent; border-right: 8px solid transparent;
+    border-bottom: 11px solid #fff;
+  }
+  .sparkle-layer { position: absolute; inset: 0; pointer-events: none; overflow: hidden; z-index: 10; }
+ 
+  /* ===== ホーム ===== */
+  .home-bg { background: linear-gradient(180deg, #FFF3F8 0%, #E8F1FF 60%, #E5FFF3 100%); }
+  .home-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; max-width: 440px; margin: 16px auto 0; }
+  .mode-btn {
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    padding: 18px 10px; border-radius: 24px; border: 4px solid #3A3052;
+    box-shadow: 0 6px 0 #3A3052; min-height: 150px; transition: transform 0.1s;
+    animation: popIn 0.5s ease-out both;
+  }
+  .mode-btn:active { transform: translateY(4px); box-shadow: 0 2px 0 #3A3052; }
+ 
+  /* ===== Countモード ===== */
+  .count-bg { background: linear-gradient(180deg, #FFF8E7 0%, #FFE8D6 100%); }
+  .big-number {
+    font-family: 'Fredoka', sans-serif; font-weight: 700; font-size: 7rem;
+    line-height: 1; text-shadow: 4px 4px 0 #3A3052;
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  .bunny-area {
+    margin: 8px auto 0; max-width: 440px; min-height: 180px;
+    padding: 14px; background: rgba(255,255,255,0.55);
+    border-radius: 24px; border: 3px dashed #D8A878;
+    display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px;
+  }
+  .bunny-area > div:not(.empty) { display: flex; justify-content: center; align-items: center; }
+  .empty-hint { grid-column: span 5; text-align: center; color: #B0A090; font-weight: 700; padding: 60px 0; }
+  .action-fixed { position: fixed; bottom: 18px; left: 0; right: 0; display: flex; flex-direction: column; align-items: center; gap: 10px; padding: 0 18px; z-index: 15; }
+  .big-pill {
+    width: 100%; max-width: 380px; padding: 18px 0;
+    border-radius: 999px; border: 4px solid #3A3052; box-shadow: 0 6px 0 #3A3052;
+    font-weight: 900; font-size: 1.3rem; transition: transform 0.1s;
+  }
+  .big-pill:active { transform: translateY(4px); box-shadow: 0 2px 0 #3A3052; }
+ 
+  /* ===== Readモード ===== */
+  .read-bg { background: linear-gradient(180deg, #E8F7D5 0%, #D6F3EA 100%); }
+  .read-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; max-width: 440px; margin: 20px auto 0; }
+  .read-card {
+    display: flex; align-items: center; gap: 12px; padding: 12px;
+    border-radius: 24px; border: 4px solid #3A3052; box-shadow: 0 5px 0 #3A3052;
+    transition: all 0.1s; animation: popIn 0.4s ease-out both;
+  }
+  .read-card:active { transform: translateY(3px); box-shadow: 0 2px 0 #3A3052; }
+  .read-card.active { border-color: #FF6B9D; box-shadow: 0 2px 0 #3A3052; transform: translateY(3px); }
+  .read-digit {
+    width: 56px; height: 56px; border-radius: 16px; border: 3px solid #3A3052;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Fredoka', sans-serif; font-weight: 700; font-size: 2rem; color: #3A3052;
+    flex-shrink: 0;
+  }
+ 
+  /* ===== Listenモード ===== */
+  .listen-bg { background: linear-gradient(180deg, #DEF0FA 0%, #E5E3FF 100%); }
+  .score-badge {
+    position: absolute; top: 14px; right: 14px;
+    padding: 6px 14px; border-radius: 999px; background: #FFE27A;
+    border: 3px solid #3A3052; display: flex; align-items: center; gap: 4px;
+    font-family: 'Fredoka', sans-serif; font-weight: 700; color: #3A3052;
+  }
+  .choices-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; max-width: 440px; margin: 24px auto 0; }
+  .choice-btn {
+    aspect-ratio: 1; border-radius: 24px; border: 4px solid #3A3052; box-shadow: 0 5px 0 #3A3052;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    transition: all 0.1s; animation: popIn 0.3s ease-out both;
+  }
+  .choice-btn:active:not(:disabled) { transform: translateY(3px); box-shadow: 0 2px 0 #3A3052; }
+  .choice-digit { font-family: 'Fredoka', sans-serif; font-weight: 700; font-size: 2.8rem; color: #3A3052; line-height: 1; }
+  .choice-hira { font-weight: 900; font-size: 1rem; color: #3A3052; margin-top: 4px; }
+ 
+  /* ===== Speakモード ===== */
+  .progress-dots { display: flex; justify-content: center; gap: 6px; margin-top: 8px; }
+  .progress-dot { height: 8px; border-radius: 4px; border: 1.5px solid #3A3052; transition: all 0.3s; }
+  .speak-big-box {
+    width: 180px; height: 180px; border-radius: 40px;
+    border: 5px solid #3A3052; box-shadow: 0 8px 0 #3A3052;
+    display: flex; align-items: center; justify-content: center;
+    margin: 16px auto 0;
+    animation: popIn 0.5s ease-out, floaty 3s ease-in-out infinite 0.5s;
+  }
+  .speak-big-digit { font-family: 'Fredoka', sans-serif; font-weight: 700; font-size: 9rem; line-height: 1; color: #3A3052; text-shadow: 0 3px 0 rgba(255,255,255,0.4); }
+  .speak-hira { font-weight: 900; font-size: 2.2rem; color: #3A3052; text-align: center; margin-top: 12px; letter-spacing: 0.15em; }
+ 
+  /* ===== Writeモード ===== */
+  .write-bg { background: linear-gradient(180deg, #FFE8F3 0%, #E8F7FF 100%); }
+  .canvas-wrap {
+    margin: 16px auto 0; max-width: 360px; aspect-ratio: 1;
+    background: #fff; border: 5px solid #3A3052; border-radius: 32px;
+    box-shadow: 0 6px 0 #3A3052; position: relative; overflow: hidden;
+  }
+  .trace-canvas, .guide-canvas { position: absolute; inset: 0; width: 100%; height: 100%; touch-action: none; }
+  .guide-canvas { pointer-events: none; }
+ 
+  /* ===== ユーティリティ ===== */
+  .flex-col-center { display: flex; flex-direction: column; align-items: center; }
+  .flex-center { display: flex; align-items: center; justify-content: center; }
+  .w-full { width: 100%; }
+  .mt-1 { margin-top: 4px; } .mt-2 { margin-top: 8px; } .mt-3 { margin-top: 12px; } .mt-4 { margin-top: 16px; } .mt-5 { margin-top: 20px; }
+  .gap-2 { gap: 8px; } .gap-3 { gap: 12px; }
+  .row { display: flex; flex-direction: row; align-items: center; justify-content: center; }
+</style>
+</head>
+<body>
+<div id="app"></div>
+ 
+<script type="text/babel" src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.development.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.development.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.6/babel.min.js"></script>
+ 
+<script type="text/babel">
+const { useState, useEffect, useRef } = React;
+ 
+// ======== 数字データ ========
+const NUMBERS = [
+  { digit: 1,  kanji: '一', hira: 'いち',   color: '#FFB5D8', bgSoft: '#FFE8F3' },
+  { digit: 2,  kanji: '二', hira: 'に',     color: '#FFCBA4', bgSoft: '#FFEEDD' },
+  { digit: 3,  kanji: '三', hira: 'さん',   color: '#FFE27A', bgSoft: '#FFF6D1' },
+  { digit: 4,  kanji: '四', hira: 'よん',   color: '#B8E986', bgSoft: '#E8F7D5' },
+  { digit: 5,  kanji: '五', hira: 'ご',     color: '#8EE1C8', bgSoft: '#D6F3EA' },
+  { digit: 6,  kanji: '六', hira: 'ろく',   color: '#A8D8F0', bgSoft: '#DEF0FA' },
+  { digit: 7,  kanji: '七', hira: 'なな',   color: '#B8B5FF', bgSoft: '#E5E3FF' },
+  { digit: 8,  kanji: '八', hira: 'はち',   color: '#E0A8E8', bgSoft: '#F3DEF7' },
+  { digit: 9,  kanji: '九', hira: 'きゅう', color: '#FFA8B8', bgSoft: '#FFDDE3' },
+  { digit: 10, kanji: '十', hira: 'じゅう', color: '#FFD166', bgSoft: '#FFEFC7' },
+];
+ 
+// ======== 音声 ========
+let jaVoice = null;
+function loadJaVoice() {
+  const voices = window.speechSynthesis.getVoices();
+  jaVoice = voices.find(v => v.lang === 'ja-JP') || voices.find(v => v.lang.startsWith('ja')) || null;
+}
+function speak(text, rate = 0.85, pitch = 1.3) {
+  if (!('speechSynthesis' in window)) return;
+  window.speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang = 'ja-JP'; u.rate = rate; u.pitch = pitch;
+  if (jaVoice) u.voice = jaVoice;
+  window.speechSynthesis.speak(u);
+}
+let audioCtx = null;
+function getCtx() {
+  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  return audioCtx;
+}
+function playChime(type = 'pop') {
+  try {
+    const ctx = getCtx();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.connect(gain); gain.connect(ctx.destination);
+    if (type === 'pop') {
+      osc.frequency.setValueAtTime(600, ctx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(1200, ctx.currentTime + 0.08);
+    } else if (type === 'success') {
+      osc.frequency.setValueAtTime(523, ctx.currentTime);
+      osc.frequency.setValueAtTime(659, ctx.currentTime + 0.1);
+      osc.frequency.setValueAtTime(784, ctx.currentTime + 0.2);
+    } else if (type === 'gentle') {
+      osc.frequency.setValueAtTime(392, ctx.currentTime);
+      osc.frequency.linearRampToValueAtTime(349, ctx.currentTime + 0.2);
+    } else if (type === 'draw') {
+      osc.frequency.setValueAtTime(880, ctx.currentTime);
+    }
+    gain.gain.setValueAtTime(0.18, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.3);
+    osc.start(); osc.stop(ctx.currentTime + 0.3);
+  } catch (e) {}
+}
+ 
+// ======== うさぎ SVG ========
+function Rabbit({ mood = 'happy', size = 140, color = '#FFFFFF', earColor = '#FFB5D8' }) {
+  return (
+    <svg width={size} height={size * 1.15} viewBox="0 0 200 230" style={{ filter: 'drop-shadow(0 4px 12px rgba(0,0,0,0.12))' }}>
+      <ellipse cx="72" cy="55" rx="18" ry="48" fill={color} stroke="#3A3052" strokeWidth="3" />
+      <ellipse cx="128" cy="55" rx="18" ry="48" fill={color} stroke="#3A3052" strokeWidth="3" />
+      <ellipse cx="72" cy="62" rx="9" ry="32" fill={earColor} />
+      <ellipse cx="128" cy="62" rx="9" ry="32" fill={earColor} />
+      <ellipse cx="100" cy="145" rx="65" ry="62" fill={color} stroke="#3A3052" strokeWidth="3" />
+      <circle cx="62" cy="160" r="10" fill="#FFB5C8" opacity="0.85" />
+      <circle cx="138" cy="160" r="10" fill="#FFB5C8" opacity="0.85" />
+      {mood === 'happy' && <>
+        <path d="M 78 135 Q 86 128 94 135" fill="none" stroke="#3A3052" strokeWidth="4.5" strokeLinecap="round" />
+        <path d="M 106 135 Q 114 128 122 135" fill="none" stroke="#3A3052" strokeWidth="4.5" strokeLinecap="round" />
+      </>}
+      {mood === 'calm' && <>
+        <circle cx="86" cy="138" r="5.5" fill="#3A3052" />
+        <circle cx="114" cy="138" r="5.5" fill="#3A3052" />
+        <circle cx="88" cy="136" r="1.8" fill="#fff" />
+        <circle cx="116" cy="136" r="1.8" fill="#fff" />
+      </>}
+      {mood === 'wow' && <>
+        <circle cx="86" cy="138" r="7" fill="#3A3052" />
+        <circle cx="114" cy="138" r="7" fill="#3A3052" />
+        <circle cx="88" cy="135" r="2.5" fill="#fff" />
+        <circle cx="116" cy="135" r="2.5" fill="#fff" />
+      </>}
+      {mood === 'sing' && <>
+        <path d="M 78 135 Q 86 128 94 135" fill="none" stroke="#3A3052" strokeWidth="4.5" strokeLinecap="round" />
+        <path d="M 106 135 Q 114 128 122 135" fill="none" stroke="#3A3052" strokeWidth="4.5" strokeLinecap="round" />
+        <ellipse cx="100" cy="170" rx="9" ry="11" fill="#3A3052" />
+        <ellipse cx="100" cy="173" rx="5" ry="6" fill="#FF7A8C" />
+      </>}
+      {mood !== 'sing' && <>
+        <path d="M 100 152 Q 92 158 100 162 Q 108 158 100 152 Z" fill="#FF8FA3" stroke="#3A3052" strokeWidth="1.5" />
+        <path d="M 100 162 Q 100 170 93 170" fill="none" stroke="#3A3052" strokeWidth="2.5" strokeLinecap="round" />
+        <path d="M 100 162 Q 100 170 107 170" fill="none" stroke="#3A3052" strokeWidth="2.5" strokeLinecap="round" />
+      </>}
+      {mood === 'sing' && <path d="M 100 150 Q 94 154 100 158 Q 106 154 100 150 Z" fill="#FF8FA3" stroke="#3A3052" strokeWidth="1.2" />}
+      <line x1="55" y1="158" x2="35" y2="155" stroke="#3A3052" strokeWidth="1.5" strokeLinecap="round" />
+      <line x1="55" y1="163" x2="35" y2="165" stroke="#3A3052" strokeWidth="1.5" strokeLinecap="round" />
+      <line x1="145" y1="158" x2="165" y2="155" stroke="#3A3052" strokeWidth="1.5" strokeLinecap="round" />
+      <line x1="145" y1="163" x2="165" y2="165" stroke="#3A3052" strokeWidth="1.5" strokeLinecap="round" />
+    </svg>
+  );
+}
+ 
+// ======== キラキラ ========
+function Sparkles({ show }) {
+  if (!show) return null;
+  const sparkles = Array.from({ length: 14 }, (_, i) => ({
+    left: 10 + Math.random() * 80, top: 10 + Math.random() * 70,
+    delay: Math.random() * 0.5, size: 20 + Math.random() * 30,
+    rot: Math.random() * 360, emoji: ['✨', '⭐', '🌟', '💖', '🎉'][i % 5],
+  }));
+  return (
+    <div className="sparkle-layer">
+      {sparkles.map((s, i) => (
+        <div key={i} style={{
+          position: 'absolute', left: `${s.left}%`, top: `${s.top}%`,
+          fontSize: `${s.size}px`, transform: `rotate(${s.rot}deg)`,
+          animation: `sparkleAnim 1.2s ease-out ${s.delay}s forwards`,
+        }}>{s.emoji}</div>
+      ))}
+    </div>
+  );
+}
+ 
+// ======== 共通コンポーネント ========
+function BackButton({ onClick }) {
+  return (
+    <button className="back-btn" onClick={() => { playChime('pop'); onClick(); }}>
+      <span style={{ fontSize: '1.2rem' }}>←</span>
+      <span>もどる</span>
+    </button>
+  );
+}
+ 
+// ======== ホーム ========
+function Home({ setMode }) {
+  const modes = [
+    { id: 'count',  label: 'かぞえよう',     emoji: '🥕', color: '#FFB5D8', desc: 'いち、に、さん！' },
+    { id: 'read',   label: 'よんでみよう',   emoji: '📖', color: '#B8E986', desc: 'タップで おしゃべり' },
+    { id: 'listen', label: 'きいてみよう',   emoji: '👂', color: '#A8D8F0', desc: 'うさぎの もんだい' },
+    { id: 'speak',  label: 'はなしてみよう', emoji: '🎤', color: '#FFD166', desc: 'いっしょに いおう' },
+    { id: 'write',  label: 'かいてみよう',   emoji: '✏️', color: '#E0A8E8', desc: 'ゆびで なぞろう' },
+  ];
+  return (
+    <div className="screen home-bg flex-col-center">
+      <div style={{ animation: 'floaty 3s ease-in-out infinite' }}>
+        <Rabbit mood="happy" size={120} />
+      </div>
+      <h1 className="title" style={{ fontSize: '2.2rem', marginTop: '6px', lineHeight: 1.1 }}>
+        すうじの <span style={{ color: '#FF6B9D' }}>もり</span>
+      </h1>
+      <p className="subtitle" style={{ fontSize: '0.95rem', marginTop: '6px' }}>
+        うさぎと いっしょに あそぼう 🐰
+      </p>
+      <div className="home-grid">
+        {modes.map((m, i) => (
+          <button key={m.id} className="mode-btn"
+            onClick={() => { playChime('pop'); speak(m.label); setMode(m.id); }}
+            style={{
+              background: m.color,
+              animationDelay: `${0.1 + i * 0.08}s`,
+              gridColumn: (i === 4 && modes.length === 5) ? 'span 2' : 'auto',
+              minHeight: (i === 4) ? '100px' : '150px',
+              flexDirection: (i === 4) ? 'row' : 'column',
+              gap: (i === 4) ? '12px' : '0',
+            }}>
+            <div style={{ fontSize: i === 4 ? '2rem' : '2.6rem', marginBottom: i === 4 ? 0 : '6px' }}>{m.emoji}</div>
+            <div className="flex-col-center">
+              <div style={{ fontWeight: 900, fontSize: '1.15rem', color: '#3A3052', lineHeight: 1.2 }}>{m.label}</div>
+              <div style={{ fontWeight: 700, fontSize: '0.75rem', color: '#5A4A72', marginTop: '4px' }}>{m.desc}</div>
+            </div>
+          </button>
+        ))}
+      </div>
+      <p style={{ fontWeight: 700, fontSize: '0.8rem', color: '#9A8DB4', marginTop: '20px' }}>
+        おうちのひとと いっしょに ♪
+      </p>
+    </div>
+  );
+}
+ 
+// ======== かぞえよう ========
+function CountMode({ onBack }) {
+  const [count, setCount] = useState(0);
+  const [bunnies, setBunnies] = useState([]);
+  const [celebrate, setCelebrate] = useState(false);
+ 
+  const addBunny = () => {
+    if (count >= 10) return;
+    const newCount = count + 1;
+    setCount(newCount);
+    setBunnies(prev => [...prev, { id: Date.now() + Math.random(), n: newCount }]);
+    playChime('pop');
+    speak(NUMBERS[newCount - 1].hira, 0.9, 1.4);
+    if (newCount === 10) {
+      setTimeout(() => {
+        setCelebrate(true); playChime('success');
+        setTimeout(() => speak('じゅっぴき！すごいね！', 0.9, 1.35), 600);
+      }, 700);
+    }
+  };
+  const reset = () => { setCount(0); setBunnies([]); setCelebrate(false); playChime('gentle'); };
+ 
+  return (
+    <div className="screen count-bg" style={{ paddingBottom: '120px' }}>
+      <BackButton onClick={onBack} />
+      <h2 className="title" style={{ fontSize: '1.4rem', marginTop: '8px' }}>🥕 うさぎを かぞえよう</h2>
+      <div className="flex-col-center" style={{ marginTop: '12px' }}>
+        <div className="big-number" style={{
+          color: count > 0 ? NUMBERS[count - 1].color : '#D0C5E0',
+          transform: count > 0 ? 'scale(1)' : 'scale(0.85)',
+        }}>{count}</div>
+        <div style={{ fontWeight: 900, fontSize: '1.8rem', color: '#3A3052', marginTop: '-6px' }}>
+          {count > 0 ? NUMBERS[count - 1].hira : '　'}
+        </div>
+      </div>
+      <div className="bunny-area">
+        {bunnies.length === 0 ? (
+          <div className="empty-hint">ボタンを おしてね ↓</div>
+        ) : bunnies.map((b, i) => (
+          <div key={b.id} style={{ animation: 'hopIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1)' }}>
+            <Rabbit mood="happy" size={52} earColor={NUMBERS[i].color} />
+          </div>
+        ))}
+      </div>
+      <div className="action-fixed">
+        {count < 10 ? (
+          <button className="big-pill" onClick={addBunny}
+            style={{ background: '#FF8FB5', color: '#fff', textShadow: '2px 2px 0 #3A3052' }}>
+            🐰 うさぎを よぶ
+          </button>
+        ) : (
+          <button className="big-pill" onClick={reset}
+            style={{ background: '#8EE1C8', color: '#3A3052' }}>
+            🔄 もういちど
+          </button>
+        )}
+      </div>
+      <Sparkles show={celebrate} />
+    </div>
+  );
+}
+ 
+// ======== よんでみよう ========
+function ReadMode({ onBack }) {
+  const [active, setActive] = useState(null);
+  const tap = (n) => {
+    setActive(n.digit); playChime('pop');
+    speak(n.hira, 0.85, 1.3);
+    setTimeout(() => setActive(null), 800);
+  };
+  return (
+    <div className="screen read-bg">
+      <BackButton onClick={onBack} />
+      <h2 className="title" style={{ fontSize: '1.4rem', marginTop: '8px' }}>📖 タップして よんでみよう</h2>
+      <p className="subtitle" style={{ fontSize: '0.88rem', marginTop: '4px', color: '#5A6B44' }}>
+        うさぎが こえを だすよ 🎵
+      </p>
+      <div className="read-grid">
+        {NUMBERS.map((n, i) => (
+          <button key={n.digit}
+            className={'read-card' + (active === n.digit ? ' active' : '')}
+            onClick={() => tap(n)}
+            style={{ background: n.bgSoft, animationDelay: `${i * 0.04}s` }}>
+            <div className="read-digit" style={{ background: n.color }}>{n.digit}</div>
+            <div className="flex-col-center" style={{ alignItems: 'flex-start' }}>
+              <span style={{ fontWeight: 900, fontSize: '1.2rem', color: '#3A3052', lineHeight: 1 }}>{n.hira}</span>
+              <span style={{ fontWeight: 700, fontSize: '0.8rem', color: '#7A6B94', marginTop: '2px' }}>{n.kanji}</span>
+            </div>
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+ 
+// ======== きいてみよう ========
+function ListenMode({ onBack }) {
+  const [target, setTarget] = useState(null);
+  const [choices, setChoices] = useState([]);
+  const [result, setResult] = useState(null);
+  const [score, setScore] = useState(0);
+ 
+  const nextQuestion = () => {
+    const pool = [...NUMBERS];
+    const targetIdx = Math.floor(Math.random() * pool.length);
+    const t = pool[targetIdx];
+    pool.splice(targetIdx, 1);
+    const distractors = [];
+    while (distractors.length < 2 && pool.length > 0) {
+      const idx = Math.floor(Math.random() * pool.length);
+      distractors.push(pool[idx]); pool.splice(idx, 1);
+    }
+    const c = [t, ...distractors].sort(() => Math.random() - 0.5);
+    setTarget(t); setChoices(c); setResult(null);
+    setTimeout(() => speak(`どれが  ${t.hira}  かな？`, 0.85, 1.3), 350);
+  };
+  useEffect(() => { nextQuestion(); }, []);
+ 
+  const pick = (n) => {
+    if (result) return;
+    if (n.digit === target.digit) {
+      setResult('correct'); setScore(s => s + 1); playChime('success');
+      setTimeout(() => speak('やったね！せいかい！', 0.9, 1.4), 200);
+      setTimeout(nextQuestion, 2200);
+    } else {
+      setResult('wrong'); playChime('gentle');
+      setTimeout(() => speak('もう いちど ためしてみよう', 0.85, 1.3), 200);
+      setTimeout(() => setResult(null), 1400);
+    }
+  };
+  const repeat = () => { if (target) speak(target.hira, 0.8, 1.3); };
+ 
+  return (
+    <div className="screen listen-bg">
+      <BackButton onClick={onBack} />
+      <div className="score-badge"><span>⭐</span><span>{score}</span></div>
+      <h2 className="title" style={{ fontSize: '1.3rem', marginTop: '8px' }}>👂 うさぎの もんだい</h2>
+      <div className="flex-col-center" style={{ marginTop: '16px' }}>
+        <div style={{
+          animation: result === 'correct' ? 'cheer 0.6s ease-in-out 3'
+                   : result === 'wrong' ? 'shake 0.4s ease-in-out'
+                   : 'floaty 2.5s ease-in-out infinite'
+        }}>
+          <Rabbit mood={result === 'correct' ? 'wow' : 'happy'} size={110} />
+        </div>
+        <div className="bubble-box bubble-tri" style={{ marginTop: '8px' }}>
+          <div style={{ fontWeight: 900, fontSize: '1.3rem', color: '#3A3052', textAlign: 'center' }}>
+            どれが「{target ? target.hira : ''}」かな？
+          </div>
+        </div>
+        <button onClick={repeat} style={{
+          marginTop: '12px', padding: '8px 20px', borderRadius: '999px',
+          background: '#A8D8F0', border: '3px solid #3A3052', boxShadow: '0 3px 0 #3A3052',
+          fontWeight: 900, fontSize: '0.95rem', color: '#3A3052',
+        }}>
+          🔊 もういちど きく
+        </button>
+      </div>
+      <div className="choices-grid">
+        {choices.map((c, i) => {
+          const isCorrect = result === 'correct' && c.digit === target.digit;
+          const isWrong = result === 'wrong' && c.digit !== target.digit;
+          return (
+            <button key={c.digit + '-' + i}
+              className="choice-btn"
+              onClick={() => pick(c)} disabled={!!result}
+              style={{
+                background: isCorrect ? '#B8E986' : c.bgSoft,
+                borderColor: isCorrect ? '#4A8A2A' : '#3A3052',
+                opacity: isWrong ? 0.5 : 1,
+                animationDelay: `${i * 0.08}s`,
+                cursor: result ? 'default' : 'pointer',
+              }}>
+              <div className="choice-digit">{c.digit}</div>
+              <div className="choice-hira">{c.hira}</div>
+            </button>
+          );
+        })}
+      </div>
+      <Sparkles show={result === 'correct'} />
+    </div>
+  );
+}
+ 
+// ======== はなしてみよう ========
+function SpeakMode({ onBack }) {
+  const [idx, setIdx] = useState(0);
+  const [stage, setStage] = useState('intro');
+  const current = NUMBERS[idx];
+ 
+  useEffect(() => {
+    setStage('intro');
+    const t = setTimeout(() => speak(`${current.hira}　いっしょに いってみよう`, 0.8, 1.3), 400);
+    return () => clearTimeout(t);
+  }, [idx]);
+ 
+  const playSample = () => { playChime('pop'); speak(current.hira, 0.75, 1.35); };
+  const iSaidIt = () => {
+    setStage('praised'); playChime('success');
+    const praises = ['じょうずだね！', 'はなまる！', 'すごい すごい！', 'かんぺき！', 'やったね！'];
+    speak(praises[Math.floor(Math.random() * praises.length)], 0.9, 1.4);
+    setTimeout(() => {
+      if (idx < NUMBERS.length - 1) setIdx(i => i + 1);
+      else setTimeout(() => speak('ぜんぶ できたね！だいすき！', 0.85, 1.35), 800);
+    }, 2000);
+  };
+  const skip = () => { setIdx(i => (i < NUMBERS.length - 1) ? i + 1 : 0); };
+ 
+  return (
+    <div className="screen" style={{
+      background: `linear-gradient(180deg, ${current.bgSoft} 0%, #FFF6D1 100%)`,
+      transition: 'background 0.5s ease'
+    }}>
+      <BackButton onClick={onBack} />
+      <div className="progress-dots">
+        {NUMBERS.map((n, i) => (
+          <div key={n.digit} className="progress-dot" style={{
+            width: i === idx ? '24px' : '8px',
+            background: i <= idx ? n.color : '#E0D8EC',
+          }} />
+        ))}
+      </div>
+      <h2 className="title" style={{ fontSize: '1.3rem', marginTop: '10px' }}>🎤 いっしょに はなそう</h2>
+      <div className="speak-big-box" style={{ background: current.color }}>
+        <div className="speak-big-digit">{current.digit}</div>
+      </div>
+      <div className="speak-hira">{current.hira}</div>
+      <div className="flex-center" style={{ marginTop: '8px' }}>
+        <div style={{
+          animation: stage === 'praised' ? 'cheer 0.5s ease-in-out 4' : 'floaty 2.5s ease-in-out infinite'
+        }}>
+          <Rabbit mood={stage === 'praised' ? 'wow' : 'sing'} size={90} earColor={current.color} />
+        </div>
+      </div>
+      <div className="flex-col-center" style={{ gap: '10px', marginTop: '12px', maxWidth: '380px', margin: '12px auto 0' }}>
+        <button onClick={playSample} style={{
+          width: '100%', padding: '14px 0', borderRadius: '999px',
+          background: '#fff', border: '4px solid #3A3052', boxShadow: '0 5px 0 #3A3052',
+          fontWeight: 900, fontSize: '1.1rem', color: '#3A3052',
+        }}>🔊 うさぎの こえを きく</button>
+        <button onClick={iSaidIt} style={{
+          width: '100%', padding: '16px 0', borderRadius: '999px',
+          background: '#FFB5D8', border: '4px solid #3A3052', boxShadow: '0 6px 0 #3A3052',
+          fontWeight: 900, fontSize: '1.25rem', color: '#3A3052',
+        }}>🗣 いえた！</button>
+        <button onClick={skip} style={{
+          padding: '6px 16px', background: 'transparent', border: 'none',
+          fontWeight: 800, fontSize: '0.9rem', color: '#7A6B94', textDecoration: 'underline',
+        }}>つぎへ →</button>
+      </div>
+      <Sparkles show={stage === 'praised'} />
+    </div>
+  );
+}
+ 
+// ======== かいてみよう（なぞり書き） ========
+function WriteMode({ onBack }) {
+  const [idx, setIdx] = useState(0);
+  const [done, setDone] = useState(false);
+  const traceCanvasRef = useRef(null);
+  const guideCanvasRef = useRef(null);
+  const drawingRef = useRef(false);
+  const lastPointRef = useRef(null);
+  const current = NUMBERS[idx];
+ 
+  // ガイド（薄い数字）を描画
+  const drawGuide = () => {
+    const canvas = guideCanvasRef.current;
+    if (!canvas) return;
+    const rect = canvas.getBoundingClientRect();
+    const dpr = window.devicePixelRatio || 1;
+    canvas.width = rect.width * dpr;
+    canvas.height = rect.height * dpr;
+    const ctx = canvas.getContext('2d');
+    ctx.scale(dpr, dpr);
+    ctx.clearRect(0, 0, rect.width, rect.height);
+ 
+    // 薄いガイド数字
+    ctx.fillStyle = current.color + '55';
+    ctx.strokeStyle = current.color;
+    ctx.lineWidth = 3;
+    ctx.setLineDash([8, 6]);
+    ctx.font = `900 ${rect.height * 0.75}px 'Fredoka', sans-serif`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    const text = String(current.digit);
+    ctx.fillText(text, rect.width / 2, rect.height / 2);
+    ctx.strokeText(text, rect.width / 2, rect.height / 2);
+    ctx.setLineDash([]);
+ 
+    // 書き順を示す矢印（スタートポイント）
+    const startPoints = {
+      1: { x: rect.width * 0.45, y: rect.height * 0.25 },
+      2: { x: rect.width * 0.35, y: rect.height * 0.32 },
+      3: { x: rect.width * 0.38, y: rect.height * 0.3 },
+      4: { x: rect.width * 0.4, y: rect.height * 0.22 },
+      5: { x: rect.width * 0.6, y: rect.height * 0.22 },
+      6: { x: rect.width * 0.55, y: rect.height * 0.22 },
+      7: { x: rect.width * 0.35, y: rect.height * 0.3 },
+      8: { x: rect.width * 0.5, y: rect.height * 0.22 },
+      9: { x: rect.width * 0.55, y: rect.height * 0.32 },
+      10: { x: rect.width * 0.3, y: rect.height * 0.25 },
+    };
+    const sp = startPoints[current.digit];
+    if (sp) {
+      ctx.fillStyle = '#FF6B9D';
+      ctx.beginPath();
+      ctx.arc(sp.x, sp.y, 10, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.strokeStyle = '#fff';
+      ctx.lineWidth = 3;
+      ctx.stroke();
+    }
+  };
+ 
+  // キャンバスを初期化
+  const initTraceCanvas = () => {
+    const canvas = traceCanvasRef.current;
+    if (!canvas) return;
+    const rect = canvas.getBoundingClientRect();
+    const dpr = window.devicePixelRatio || 1;
+    canvas.width = rect.width * dpr;
+    canvas.height = rect.height * dpr;
+    const ctx = canvas.getContext('2d');
+    ctx.scale(dpr, dpr);
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+    ctx.strokeStyle = current.color;
+    ctx.lineWidth = 18;
+  };
+ 
+  const clearTrace = () => {
+    const canvas = traceCanvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    setDone(false);
+  };
+ 
+  useEffect(() => {
+    setTimeout(() => { drawGuide(); initTraceCanvas(); clearTrace(); }, 50);
+    setDone(false);
+    setTimeout(() => speak(`${current.hira}　を かいてみよう`, 0.85, 1.3), 300);
+  }, [idx]);
+ 
+  const getPos = (e) => {
+    const canvas = traceCanvasRef.current;
+    const rect = canvas.getBoundingClientRect();
+    const touch = e.touches && e.touches[0];
+    const clientX = touch ? touch.clientX : e.clientX;
+    const clientY = touch ? touch.clientY : e.clientY;
+    return { x: clientX - rect.left, y: clientY - rect.top };
+  };
+ 
+  const startDraw = (e) => {
+    e.preventDefault();
+    drawingRef.current = true;
+    const pos = getPos(e);
+    lastPointRef.current = pos;
+    const ctx = traceCanvasRef.current.getContext('2d');
+    ctx.beginPath();
+    ctx.arc(pos.x, pos.y, 9, 0, Math.PI * 2);
+    ctx.fillStyle = current.color;
+    ctx.fill();
+  };
+  const moveDraw = (e) => {
+    if (!drawingRef.current) return;
+    e.preventDefault();
+    const pos = getPos(e);
+    const ctx = traceCanvasRef.current.getContext('2d');
+    ctx.beginPath();
+    ctx.moveTo(lastPointRef.current.x, lastPointRef.current.y);
+    ctx.lineTo(pos.x, pos.y);
+    ctx.strokeStyle = current.color;
+    ctx.lineWidth = 18;
+    ctx.lineCap = 'round';
+    ctx.stroke();
+    lastPointRef.current = pos;
+  };
+  const endDraw = (e) => {
+    if (!drawingRef.current) return;
+    drawingRef.current = false;
+  };
+ 
+  const complete = () => {
+    setDone(true); playChime('success');
+    const praises = ['じょうずに かけたね！', 'はなまる！', 'すごい！', 'やったね！'];
+    speak(praises[Math.floor(Math.random() * praises.length)], 0.9, 1.4);
+    setTimeout(() => {
+      if (idx < NUMBERS.length - 1) setIdx(i => i + 1);
+      else setIdx(0);
+    }, 2200);
+  };
+ 
+  const next = () => { setIdx(i => (i < NUMBERS.length - 1) ? i + 1 : 0); };
+  const prev = () => { setIdx(i => (i > 0) ? i - 1 : NUMBERS.length - 1); };
+ 
+  return (
+    <div className="screen write-bg">
+      <BackButton onClick={onBack} />
+      <div className="progress-dots">
+        {NUMBERS.map((n, i) => (
+          <div key={n.digit} className="progress-dot" style={{
+            width: i === idx ? '24px' : '8px',
+            background: i <= idx ? n.color : '#E0D8EC',
+          }} />
+        ))}
+      </div>
+      <h2 className="title" style={{ fontSize: '1.3rem', marginTop: '10px' }}>✏️ ゆびで なぞろう</h2>
+      <p className="subtitle" style={{ fontSize: '0.88rem', marginTop: '4px' }}>
+        <span style={{ color: '#FF6B9D' }}>●</span> から はじめてね
+      </p>
+ 
+      <div className="row" style={{ gap: '16px', marginTop: '10px' }}>
+        <div style={{
+          width: '70px', height: '70px', borderRadius: '20px',
+          background: current.color, border: '4px solid #3A3052',
+          boxShadow: '0 4px 0 #3A3052',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          fontFamily: 'Fredoka, sans-serif', fontWeight: 700, fontSize: '2.8rem', color: '#3A3052',
+        }}>{current.digit}</div>
+        <div style={{ fontWeight: 900, fontSize: '1.8rem', color: '#3A3052' }}>{current.hira}</div>
+      </div>
+ 
+      <div className="canvas-wrap">
+        <canvas ref={guideCanvasRef} className="guide-canvas" />
+        <canvas ref={traceCanvasRef} className="trace-canvas"
+          onMouseDown={startDraw} onMouseMove={moveDraw} onMouseUp={endDraw} onMouseLeave={endDraw}
+          onTouchStart={startDraw} onTouchMove={moveDraw} onTouchEnd={endDraw}
+        />
+      </div>
+ 
+      <div className="flex-center" style={{ gap: '10px', marginTop: '14px', flexWrap: 'wrap', padding: '0 12px' }}>
+        <button onClick={prev} style={{
+          padding: '10px 18px', borderRadius: '999px',
+          background: '#fff', border: '3px solid #3A3052', boxShadow: '0 3px 0 #3A3052',
+          fontWeight: 900, fontSize: '0.95rem', color: '#3A3052',
+        }}>← まえ</button>
+        <button onClick={clearTrace} style={{
+          padding: '10px 18px', borderRadius: '999px',
+          background: '#FFF6D1', border: '3px solid #3A3052', boxShadow: '0 3px 0 #3A3052',
+          fontWeight: 900, fontSize: '0.95rem', color: '#3A3052',
+        }}>🧹 けす</button>
+        <button onClick={next} style={{
+          padding: '10px 18px', borderRadius: '999px',
+          background: '#fff', border: '3px solid #3A3052', boxShadow: '0 3px 0 #3A3052',
+          fontWeight: 900, fontSize: '0.95rem', color: '#3A3052',
+        }}>つぎ →</button>
+      </div>
+      <div className="flex-center" style={{ marginTop: '12px' }}>
+        <button onClick={complete} style={{
+          padding: '14px 32px', borderRadius: '999px',
+          background: '#FFB5D8', border: '4px solid #3A3052', boxShadow: '0 5px 0 #3A3052',
+          fontWeight: 900, fontSize: '1.15rem', color: '#3A3052',
+        }}>🎉 かけた！</button>
+      </div>
+      <Sparkles show={done} />
+    </div>
+  );
+}
+ 
+// ======== メイン ========
+function App() {
+  const [mode, setMode] = useState('home');
+ 
+  useEffect(() => {
+    loadJaVoice();
+    if (window.speechSynthesis.onvoiceschanged !== undefined) {
+      window.speechSynthesis.onvoiceschanged = loadJaVoice;
+    }
+    // オーディオコンテクストのunlock（iOS対策）
+    const unlock = () => {
+      try { getCtx().resume(); } catch (e) {}
+      speak(' ', 1, 1); // voice warm-up
+      document.removeEventListener('touchstart', unlock);
+      document.removeEventListener('click', unlock);
+    };
+    document.addEventListener('touchstart', unlock, { once: true });
+    document.addEventListener('click', unlock, { once: true });
+  }, []);
+ 
+  return (
+    <>
+      {mode === 'home'   && <Home setMode={setMode} />}
+      {mode === 'count'  && <CountMode onBack={() => setMode('home')} />}
+      {mode === 'read'   && <ReadMode onBack={() => setMode('home')} />}
+      {mode === 'listen' && <ListenMode onBack={() => setMode('home')} />}
+      {mode === 'speak'  && <SpeakMode onBack={() => setMode('home')} />}
+      {mode === 'write'  && <WriteMode onBack={() => setMode('home')} />}
+    </>
+  );
+}
+ 
+const root = ReactDOM.createRoot(document.getElementById('app'));
+root.render(<App />);
+</script>
+</body>
+</html>
+ 
