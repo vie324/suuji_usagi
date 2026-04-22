@@ -94,6 +94,19 @@
     animation: popIn 0.5s ease-out both;
   }
   .mode-btn:active { transform: translateY(4px); box-shadow: 0 2px 0 #3A3052; }
+  .range-card {
+    margin: 14px auto 4px; padding: 10px 14px; max-width: 440px; width: calc(100% - 8px);
+    background: rgba(255,255,255,0.7); border-radius: 20px; border: 3px solid #3A3052;
+    box-shadow: 0 3px 0 #3A3052;
+    display: flex; flex-direction: column; gap: 8px;
+  }
+  .range-pills { display: flex; gap: 6px; justify-content: center; flex-wrap: wrap; }
+  .range-pill {
+    padding: 6px 14px; border-radius: 999px; border: 2.5px solid #3A3052;
+    background: #fff; color: #3A3052; font-weight: 900; font-size: 0.85rem;
+    font-family: 'Fredoka', 'M PLUS Rounded 1c', sans-serif;
+  }
+  .range-pill.active { background: #FF8FB5; color: #fff; box-shadow: 0 2px 0 #3A3052; }
  
   /* ===== Countモード ===== */
   .count-bg { background: linear-gradient(180deg, #FFF8E7 0%, #FFE8D6 100%); }
@@ -154,7 +167,7 @@
   .choice-hira { font-weight: 900; font-size: 1rem; color: #3A3052; margin-top: 4px; }
  
   /* ===== Speakモード ===== */
-  .progress-dots { display: flex; justify-content: center; gap: 6px; margin-top: 8px; }
+  .progress-dots { display: flex; justify-content: center; gap: 5px; margin-top: 8px; flex-wrap: wrap; padding: 0 12px; }
   .progress-dot { height: 8px; border-radius: 4px; border: 1.5px solid #3A3052; transition: all 0.3s; }
   .speak-big-box {
     width: 180px; height: 180px; border-radius: 40px;
@@ -176,6 +189,116 @@
   .trace-canvas, .guide-canvas { position: absolute; inset: 0; width: 100%; height: 100%; touch-action: none; }
   .guide-canvas { pointer-events: none; }
  
+  /* ===== くらべっこ ===== */
+  .compare-bg { background: linear-gradient(180deg, #D6F3EA 0%, #E8F7D5 100%); }
+  .compare-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 14px;
+    max-width: 460px; margin: 20px auto 0; padding: 0 8px;
+  }
+  .compare-card {
+    display: flex; flex-direction: column; align-items: center; gap: 8px;
+    padding: 18px 10px; border-radius: 28px; border: 4px solid #3A3052;
+    box-shadow: 0 5px 0 #3A3052; animation: popIn 0.4s ease-out both;
+    transition: all 0.15s;
+  }
+  .compare-card:active:not(:disabled) { transform: translateY(3px); box-shadow: 0 2px 0 #3A3052; }
+  .compare-card.winner { background: #B8E986 !important; }
+  .compare-card.loser  { opacity: 0.45; }
+  .compare-digit {
+    font-family: 'Fredoka', sans-serif; font-weight: 700; font-size: 3.2rem;
+    color: #3A3052; line-height: 1;
+  }
+  .compare-dots {
+    display: flex; flex-wrap: wrap; justify-content: center; gap: 4px;
+    max-width: 160px; min-height: 60px;
+  }
+  .compare-dot { font-size: 1.1rem; line-height: 1; }
+
+  /* ===== けいさん ===== */
+  .math-bg { background: linear-gradient(180deg, #FFEEDD 0%, #FFF6D1 100%); }
+  .math-equation {
+    display: flex; align-items: center; justify-content: center; gap: 10px;
+    font-family: 'Fredoka', sans-serif; font-weight: 700; font-size: 3.6rem;
+    color: #3A3052; margin-top: 14px; flex-wrap: wrap;
+  }
+  .math-pic-row {
+    display: flex; justify-content: center; align-items: center; gap: 14px;
+    margin-top: 10px; flex-wrap: wrap;
+  }
+  .math-pic-group {
+    padding: 8px 12px; background: rgba(255,255,255,0.7);
+    border: 3px dashed #D8A878; border-radius: 20px;
+    display: flex; flex-wrap: wrap; max-width: 150px; justify-content: center; gap: 2px;
+  }
+  .math-pic { font-size: 1.4rem; line-height: 1.1; }
+  .math-op { font-size: 2.8rem; font-weight: 900; color: #FF6B9D; }
+
+  /* ===== かぞえかた ===== */
+  .counter-bg { background: linear-gradient(180deg, #E5E3FF 0%, #FFE8F3 100%); }
+  .counter-tabs {
+    display: flex; gap: 6px; justify-content: center; flex-wrap: wrap;
+    max-width: 460px; margin: 10px auto 0; padding: 0 10px;
+  }
+  .counter-tab {
+    padding: 8px 14px; border-radius: 999px; border: 3px solid #3A3052;
+    background: #fff; font-weight: 900; font-size: 0.85rem; color: #3A3052;
+  }
+  .counter-tab.active { box-shadow: 0 3px 0 #3A3052; transform: translateY(-1px); }
+  .counter-stage {
+    max-width: 420px; margin: 14px auto 0; padding: 16px;
+    background: rgba(255,255,255,0.75); border: 4px solid #3A3052;
+    border-radius: 28px; box-shadow: 0 5px 0 #3A3052;
+  }
+  .counter-items {
+    display: flex; flex-wrap: wrap; justify-content: center; gap: 4px;
+    min-height: 80px; padding: 8px;
+  }
+  .counter-item { font-size: 2rem; line-height: 1; animation: hopIn 0.35s ease-out both; }
+  .counter-stepper {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 10px; margin-top: 12px;
+  }
+  .counter-step-btn {
+    width: 54px; height: 54px; border-radius: 50%;
+    border: 4px solid #3A3052; box-shadow: 0 4px 0 #3A3052;
+    font-family: 'Fredoka', sans-serif; font-size: 1.8rem; font-weight: 700;
+    color: #3A3052; background: #fff;
+  }
+  .counter-step-btn:active:not(:disabled) { transform: translateY(3px); box-shadow: 0 1px 0 #3A3052; }
+  .counter-step-btn:disabled { opacity: 0.4; }
+  .counter-reading {
+    font-weight: 900; font-size: 2rem; color: #3A3052;
+    text-align: center; flex: 1; font-family: 'Fredoka', 'M PLUS Rounded 1c', sans-serif;
+  }
+
+  /* ===== シールちょう ===== */
+  .stickers-bg { background: linear-gradient(180deg, #FFF6D1 0%, #FFE8F3 100%); }
+  .sticker-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(58px, 1fr));
+    gap: 10px; max-width: 460px; margin: 14px auto 0; padding: 10px;
+    background: rgba(255,255,255,0.75); border: 4px solid #3A3052;
+    border-radius: 28px; box-shadow: 0 5px 0 #3A3052; min-height: 160px;
+  }
+  .sticker-cell {
+    aspect-ratio: 1; border-radius: 50%; border: 3px solid #3A3052;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.6rem; animation: popIn 0.4s ease-out both;
+  }
+  .sticker-empty {
+    grid-column: 1 / -1; text-align: center; color: #B0A090;
+    font-weight: 700; padding: 30px 0;
+  }
+  .backup-btns {
+    display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;
+    margin-top: 14px;
+  }
+  .backup-btn {
+    padding: 10px 18px; border-radius: 999px; border: 3px solid #3A3052;
+    box-shadow: 0 3px 0 #3A3052; background: #fff; color: #3A3052;
+    font-weight: 900; font-size: 0.9rem;
+  }
+  .backup-btn:active { transform: translateY(2px); box-shadow: 0 1px 0 #3A3052; }
+
   /* ===== ユーティリティ ===== */
   .flex-col-center { display: flex; flex-direction: column; align-items: center; }
   .flex-center { display: flex; align-items: center; justify-content: center; }
@@ -188,26 +311,46 @@
 <body>
 <div id="app"></div>
  
-<script type="text/babel" src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.development.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.development.min.js"></script>
+<script crossorigin src="https://unpkg.com/react@18.2.0/umd/react.production.min.js"></script>
+<script crossorigin src="https://unpkg.com/react-dom@18.2.0/umd/react-dom.production.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.6/babel.min.js"></script>
  
 <script type="text/babel">
 const { useState, useEffect, useRef } = React;
  
-// ======== 数字データ ========
-const NUMBERS = [
-  { digit: 1,  kanji: '一', hira: 'いち',   color: '#FFB5D8', bgSoft: '#FFE8F3' },
-  { digit: 2,  kanji: '二', hira: 'に',     color: '#FFCBA4', bgSoft: '#FFEEDD' },
-  { digit: 3,  kanji: '三', hira: 'さん',   color: '#FFE27A', bgSoft: '#FFF6D1' },
-  { digit: 4,  kanji: '四', hira: 'よん',   color: '#B8E986', bgSoft: '#E8F7D5' },
-  { digit: 5,  kanji: '五', hira: 'ご',     color: '#8EE1C8', bgSoft: '#D6F3EA' },
-  { digit: 6,  kanji: '六', hira: 'ろく',   color: '#A8D8F0', bgSoft: '#DEF0FA' },
-  { digit: 7,  kanji: '七', hira: 'なな',   color: '#B8B5FF', bgSoft: '#E5E3FF' },
-  { digit: 8,  kanji: '八', hira: 'はち',   color: '#E0A8E8', bgSoft: '#F3DEF7' },
-  { digit: 9,  kanji: '九', hira: 'きゅう', color: '#FFA8B8', bgSoft: '#FFDDE3' },
-  { digit: 10, kanji: '十', hira: 'じゅう', color: '#FFD166', bgSoft: '#FFEFC7' },
+// ======== 数字データ（1〜100） ========
+const PALETTE = [
+  { color: '#FFB5D8', bgSoft: '#FFE8F3' },
+  { color: '#FFCBA4', bgSoft: '#FFEEDD' },
+  { color: '#FFE27A', bgSoft: '#FFF6D1' },
+  { color: '#B8E986', bgSoft: '#E8F7D5' },
+  { color: '#8EE1C8', bgSoft: '#D6F3EA' },
+  { color: '#A8D8F0', bgSoft: '#DEF0FA' },
+  { color: '#B8B5FF', bgSoft: '#E5E3FF' },
+  { color: '#E0A8E8', bgSoft: '#F3DEF7' },
+  { color: '#FFA8B8', bgSoft: '#FFDDE3' },
+  { color: '#FFD166', bgSoft: '#FFEFC7' },
 ];
+const DIGIT_HIRA  = ['', 'いち', 'に', 'さん', 'よん', 'ご', 'ろく', 'なな', 'はち', 'きゅう'];
+const TENS_HIRA   = ['', 'じゅう', 'にじゅう', 'さんじゅう', 'よんじゅう', 'ごじゅう', 'ろくじゅう', 'ななじゅう', 'はちじゅう', 'きゅうじゅう'];
+const DIGIT_KANJI = ['', '一', '二', '三', '四', '五', '六', '七', '八', '九'];
+const TENS_KANJI  = ['', '十', '二十', '三十', '四十', '五十', '六十', '七十', '八十', '九十'];
+
+const NUMBERS = Array.from({ length: 100 }, (_, i) => {
+  const n = i + 1;
+  let hira, kanji;
+  if (n === 100) {
+    hira = 'ひゃく';
+    kanji = '百';
+  } else {
+    const tens = Math.floor(n / 10);
+    const ones = n % 10;
+    hira  = TENS_HIRA[tens]  + DIGIT_HIRA[ones];
+    kanji = TENS_KANJI[tens] + DIGIT_KANJI[ones];
+  }
+  const p = PALETTE[i % PALETTE.length];
+  return { digit: n, kanji, hira, color: p.color, bgSoft: p.bgSoft };
+});
  
 // ======== 音声 ========
 let jaVoice = null;
@@ -252,7 +395,141 @@ function playChime(type = 'pop') {
     osc.start(); osc.stop(ctx.currentTime + 0.3);
   } catch (e) {}
 }
- 
+
+// ======== 保存（IndexedDB） ========
+const DB_NAME = 'suuji_no_mori';
+const DB_VERSION = 1;
+const STORE = 'kv';
+let _dbPromise = null;
+function openDB() {
+  if (_dbPromise) return _dbPromise;
+  _dbPromise = new Promise((resolve, reject) => {
+    if (!('indexedDB' in window)) { reject(new Error('no indexedDB')); return; }
+    const req = indexedDB.open(DB_NAME, DB_VERSION);
+    req.onupgradeneeded = (e) => {
+      const db = e.target.result;
+      if (!db.objectStoreNames.contains(STORE)) db.createObjectStore(STORE);
+    };
+    req.onsuccess = () => resolve(req.result);
+    req.onerror = () => reject(req.error);
+  });
+  return _dbPromise;
+}
+function dbGet(key) {
+  return openDB().then(db => new Promise((resolve, reject) => {
+    const tx = db.transaction(STORE, 'readonly');
+    const req = tx.objectStore(STORE).get(key);
+    req.onsuccess = () => resolve(req.result);
+    req.onerror = () => reject(req.error);
+  })).catch(() => undefined);
+}
+function dbSet(key, value) {
+  return openDB().then(db => new Promise((resolve, reject) => {
+    const tx = db.transaction(STORE, 'readwrite');
+    tx.objectStore(STORE).put(value, key);
+    tx.oncomplete = () => resolve();
+    tx.onerror = () => reject(tx.error);
+  })).catch(() => {});
+}
+function dbAll() {
+  return openDB().then(db => new Promise((resolve, reject) => {
+    const tx = db.transaction(STORE, 'readonly');
+    const store = tx.objectStore(STORE);
+    const result = {};
+    const req = store.openCursor();
+    req.onsuccess = (e) => {
+      const cur = e.target.result;
+      if (cur) { result[cur.key] = cur.value; cur.continue(); }
+      else resolve(result);
+    };
+    req.onerror = () => reject(req.error);
+  })).catch(() => ({}));
+}
+
+function useStored(key, defaultValue) {
+  const [value, setValue] = useState(defaultValue);
+  const [loaded, setLoaded] = useState(false);
+  useEffect(() => {
+    let alive = true;
+    dbGet(key).then(v => {
+      if (!alive) return;
+      if (v !== undefined) setValue(v);
+      setLoaded(true);
+    });
+    return () => { alive = false; };
+  }, [key]);
+  const save = (next) => {
+    setValue(prev => {
+      const v = typeof next === 'function' ? next(prev) : next;
+      dbSet(key, v);
+      return v;
+    });
+  };
+  return [value, save, loaded];
+}
+
+// ======== 助数詞（かぞえかた） ========
+const COUNTERS = [
+  {
+    id: 'hiki',
+    label: 'どうぶつ',
+    reading: '匹（ひき）',
+    emoji: '🐰',
+    color: '#FFB5D8',
+    bgSoft: '#FFE8F3',
+    forms: ['いっぴき','にひき','さんびき','よんひき','ごひき','ろっぴき','ななひき','はっぴき','きゅうひき','じゅっぴき'],
+  },
+  {
+    id: 'ko',
+    label: 'りんご',
+    reading: '個（こ）',
+    emoji: '🍎',
+    color: '#FFA8B8',
+    bgSoft: '#FFDDE3',
+    forms: ['いっこ','にこ','さんこ','よんこ','ごこ','ろっこ','ななこ','はっこ','きゅうこ','じゅっこ'],
+  },
+  {
+    id: 'hon',
+    label: 'にんじん',
+    reading: '本（ほん）',
+    emoji: '🥕',
+    color: '#FFCBA4',
+    bgSoft: '#FFEEDD',
+    forms: ['いっぽん','にほん','さんぼん','よんほん','ごほん','ろっぽん','ななほん','はっぽん','きゅうほん','じゅっぽん'],
+  },
+  {
+    id: 'mai',
+    label: 'クッキー',
+    reading: '枚（まい）',
+    emoji: '🍪',
+    color: '#FFE27A',
+    bgSoft: '#FFF6D1',
+    forms: ['いちまい','にまい','さんまい','よんまい','ごまい','ろくまい','ななまい','はちまい','きゅうまい','じゅうまい'],
+  },
+  {
+    id: 'nin',
+    label: 'おともだち',
+    reading: '人（にん）',
+    emoji: '👧',
+    color: '#B8B5FF',
+    bgSoft: '#E5E3FF',
+    forms: ['ひとり','ふたり','さんにん','よにん','ごにん','ろくにん','しちにん','はちにん','きゅうにん','じゅうにん'],
+  },
+];
+
+// ======== シール定義 ========
+const STICKER_EMOJIS = ['⭐','🌟','✨','💖','🎉','🌈','🎀','🍀','🐰','🥕','🍎','🌸','🌟','🎈','🎁'];
+function makeSticker(kind, label) {
+  return {
+    id: Date.now() + Math.random(),
+    kind,
+    label,
+    emoji: STICKER_EMOJIS[Math.floor(Math.random() * STICKER_EMOJIS.length)],
+    earnedAt: new Date().toISOString(),
+  };
+}
+const RANGE_OPTIONS = [10, 20, 50, 100];
+
 // ======== うさぎ SVG ========
 function Rabbit({ mood = 'happy', size = 140, color = '#FFFFFF', earColor = '#FFB5D8' }) {
   return (
@@ -332,16 +609,24 @@ function BackButton({ onClick }) {
 }
  
 // ======== ホーム ========
-function Home({ setMode }) {
+function Home({ setMode, range, setRange, stickerCount }) {
   const modes = [
-    { id: 'count',  label: 'かぞえよう',     emoji: '🥕', color: '#FFB5D8', desc: 'いち、に、さん！' },
-    { id: 'read',   label: 'よんでみよう',   emoji: '📖', color: '#B8E986', desc: 'タップで おしゃべり' },
-    { id: 'listen', label: 'きいてみよう',   emoji: '👂', color: '#A8D8F0', desc: 'うさぎの もんだい' },
-    { id: 'speak',  label: 'はなしてみよう', emoji: '🎤', color: '#FFD166', desc: 'いっしょに いおう' },
-    { id: 'write',  label: 'かいてみよう',   emoji: '✏️', color: '#E0A8E8', desc: 'ゆびで なぞろう' },
+    { id: 'count',   label: 'かぞえよう',     emoji: '🥕', color: '#FFB5D8', desc: 'いち、に、さん！' },
+    { id: 'read',    label: 'よんでみよう',   emoji: '📖', color: '#B8E986', desc: 'タップで おしゃべり' },
+    { id: 'listen',  label: 'きいてみよう',   emoji: '👂', color: '#A8D8F0', desc: 'うさぎの もんだい' },
+    { id: 'speak',   label: 'はなしてみよう', emoji: '🎤', color: '#FFD166', desc: 'いっしょに いおう' },
+    { id: 'write',   label: 'かいてみよう',   emoji: '✏️', color: '#E0A8E8', desc: 'ゆびで なぞろう' },
+    { id: 'compare', label: 'くらべっこ',     emoji: '⚖️', color: '#8EE1C8', desc: 'どっちが おおい？' },
+    { id: 'math',    label: 'けいさん',       emoji: '➕', color: '#FFCBA4', desc: 'たしざん ひきざん' },
+    { id: 'counter', label: 'かぞえかた',     emoji: '🐰', color: '#B8B5FF', desc: '1ぴき、2ひき…' },
   ];
   return (
     <div className="screen home-bg flex-col-center">
+      <button onClick={() => { playChime('pop'); setMode('stickers'); }}
+        className="score-badge" style={{ cursor: 'pointer', fontSize: '0.95rem' }}>
+        <span>🎖</span>
+        <span>{stickerCount}</span>
+      </button>
       <div style={{ animation: 'floaty 3s ease-in-out infinite' }}>
         <Rabbit mood="happy" size={120} />
       </div>
@@ -351,27 +636,36 @@ function Home({ setMode }) {
       <p className="subtitle" style={{ fontSize: '0.95rem', marginTop: '6px' }}>
         うさぎと いっしょに あそぼう 🐰
       </p>
+
+      <div className="range-card">
+        <div style={{ fontWeight: 900, fontSize: '0.9rem', color: '#3A3052', textAlign: 'center' }}>
+          どこまで あそぶ？
+        </div>
+        <div className="range-pills">
+          {RANGE_OPTIONS.map(r => (
+            <button key={r}
+              onClick={() => { playChime('pop'); setRange(r); }}
+              className={'range-pill' + (range === r ? ' active' : '')}>
+              1〜{r}
+            </button>
+          ))}
+        </div>
+      </div>
+
       <div className="home-grid">
         {modes.map((m, i) => (
           <button key={m.id} className="mode-btn"
             onClick={() => { playChime('pop'); speak(m.label); setMode(m.id); }}
-            style={{
-              background: m.color,
-              animationDelay: `${0.1 + i * 0.08}s`,
-              gridColumn: (i === 4 && modes.length === 5) ? 'span 2' : 'auto',
-              minHeight: (i === 4) ? '100px' : '150px',
-              flexDirection: (i === 4) ? 'row' : 'column',
-              gap: (i === 4) ? '12px' : '0',
-            }}>
-            <div style={{ fontSize: i === 4 ? '2rem' : '2.6rem', marginBottom: i === 4 ? 0 : '6px' }}>{m.emoji}</div>
+            style={{ background: m.color, animationDelay: `${0.1 + i * 0.06}s`, minHeight: '130px' }}>
+            <div style={{ fontSize: '2.4rem', marginBottom: '4px' }}>{m.emoji}</div>
             <div className="flex-col-center">
-              <div style={{ fontWeight: 900, fontSize: '1.15rem', color: '#3A3052', lineHeight: 1.2 }}>{m.label}</div>
-              <div style={{ fontWeight: 700, fontSize: '0.75rem', color: '#5A4A72', marginTop: '4px' }}>{m.desc}</div>
+              <div style={{ fontWeight: 900, fontSize: '1.05rem', color: '#3A3052', lineHeight: 1.2 }}>{m.label}</div>
+              <div style={{ fontWeight: 700, fontSize: '0.72rem', color: '#5A4A72', marginTop: '3px' }}>{m.desc}</div>
             </div>
           </button>
         ))}
       </div>
-      <p style={{ fontWeight: 700, fontSize: '0.8rem', color: '#9A8DB4', marginTop: '20px' }}>
+      <p style={{ fontWeight: 700, fontSize: '0.8rem', color: '#9A8DB4', marginTop: '16px' }}>
         おうちのひとと いっしょに ♪
       </p>
     </div>
@@ -379,22 +673,31 @@ function Home({ setMode }) {
 }
  
 // ======== かぞえよう ========
-function CountMode({ onBack }) {
+function CountMode({ onBack, range, awardSticker }) {
   const [count, setCount] = useState(0);
   const [bunnies, setBunnies] = useState([]);
   const [celebrate, setCelebrate] = useState(false);
- 
+
+  const GOAL = range;
+  const goalHira = NUMBERS[GOAL - 1].hira;
   const addBunny = () => {
-    if (count >= 10) return;
+    if (count >= GOAL) return;
     const newCount = count + 1;
     setCount(newCount);
     setBunnies(prev => [...prev, { id: Date.now() + Math.random(), n: newCount }]);
     playChime('pop');
     speak(NUMBERS[newCount - 1].hira, 0.9, 1.4);
-    if (newCount === 10) {
+    if (newCount % 10 === 0 && newCount !== GOAL) {
+      setTimeout(() => {
+        playChime('success');
+        speak(`${NUMBERS[newCount - 1].hira}！いいね！`, 0.9, 1.35);
+      }, 500);
+    }
+    if (newCount === GOAL) {
       setTimeout(() => {
         setCelebrate(true); playChime('success');
-        setTimeout(() => speak('じゅっぴき！すごいね！', 0.9, 1.35), 600);
+        setTimeout(() => speak(`${goalHira}まで かぞえたね！すごい！`, 0.9, 1.35), 600);
+        awardSticker && awardSticker('count', `1〜${GOAL} かぞえた`);
       }, 700);
     }
   };
@@ -408,6 +711,7 @@ function CountMode({ onBack }) {
         <div className="big-number" style={{
           color: count > 0 ? NUMBERS[count - 1].color : '#D0C5E0',
           transform: count > 0 ? 'scale(1)' : 'scale(0.85)',
+          fontSize: count >= 100 ? '5.5rem' : count >= 10 ? '6.2rem' : '7rem',
         }}>{count}</div>
         <div style={{ fontWeight: 900, fontSize: '1.8rem', color: '#3A3052', marginTop: '-6px' }}>
           {count > 0 ? NUMBERS[count - 1].hira : '　'}
@@ -423,11 +727,20 @@ function CountMode({ onBack }) {
         ))}
       </div>
       <div className="action-fixed">
-        {count < 10 ? (
-          <button className="big-pill" onClick={addBunny}
-            style={{ background: '#FF8FB5', color: '#fff', textShadow: '2px 2px 0 #3A3052' }}>
-            🐰 うさぎを よぶ
-          </button>
+        {count < GOAL ? (
+          <div className="flex-col-center" style={{ gap: '8px', width: '100%' }}>
+            <button className="big-pill" onClick={addBunny}
+              style={{ background: '#FF8FB5', color: '#fff', textShadow: '2px 2px 0 #3A3052' }}>
+              🐰 うさぎを よぶ（{count} / {GOAL}）
+            </button>
+            {count > 0 && (
+              <button onClick={reset} style={{
+                padding: '6px 18px', borderRadius: '999px',
+                background: '#fff', border: '3px solid #3A3052', boxShadow: '0 3px 0 #3A3052',
+                fontWeight: 900, fontSize: '0.85rem', color: '#3A3052',
+              }}>↩ さいしょから</button>
+            )}
+          </div>
         ) : (
           <button className="big-pill" onClick={reset}
             style={{ background: '#8EE1C8', color: '#3A3052' }}>
@@ -441,22 +754,23 @@ function CountMode({ onBack }) {
 }
  
 // ======== よんでみよう ========
-function ReadMode({ onBack }) {
+function ReadMode({ onBack, range }) {
   const [active, setActive] = useState(null);
+  const pool = NUMBERS.slice(0, range);
   const tap = (n) => {
     setActive(n.digit); playChime('pop');
     speak(n.hira, 0.85, 1.3);
     setTimeout(() => setActive(null), 800);
   };
   return (
-    <div className="screen read-bg">
+    <div className="screen read-bg" style={{ paddingBottom: '32px' }}>
       <BackButton onClick={onBack} />
       <h2 className="title" style={{ fontSize: '1.4rem', marginTop: '8px' }}>📖 タップして よんでみよう</h2>
       <p className="subtitle" style={{ fontSize: '0.88rem', marginTop: '4px', color: '#5A6B44' }}>
-        うさぎが こえを だすよ 🎵
+        うさぎが こえを だすよ 🎵（1〜{range}）
       </p>
       <div className="read-grid">
-        {NUMBERS.map((n, i) => (
+        {pool.map((n, i) => (
           <button key={n.digit}
             className={'read-card' + (active === n.digit ? ' active' : '')}
             onClick={() => tap(n)}
@@ -474,14 +788,14 @@ function ReadMode({ onBack }) {
 }
  
 // ======== きいてみよう ========
-function ListenMode({ onBack }) {
+function ListenMode({ onBack, range, awardSticker }) {
   const [target, setTarget] = useState(null);
   const [choices, setChoices] = useState([]);
   const [result, setResult] = useState(null);
   const [score, setScore] = useState(0);
- 
+
   const nextQuestion = () => {
-    const pool = [...NUMBERS];
+    const pool = NUMBERS.slice(0, range);
     const targetIdx = Math.floor(Math.random() * pool.length);
     const t = pool[targetIdx];
     pool.splice(targetIdx, 1);
@@ -494,13 +808,17 @@ function ListenMode({ onBack }) {
     setTarget(t); setChoices(c); setResult(null);
     setTimeout(() => speak(`どれが  ${t.hira}  かな？`, 0.85, 1.3), 350);
   };
-  useEffect(() => { nextQuestion(); }, []);
- 
+  useEffect(() => { nextQuestion(); }, [range]);
+
   const pick = (n) => {
     if (result) return;
     if (n.digit === target.digit) {
-      setResult('correct'); setScore(s => s + 1); playChime('success');
+      setResult('correct');
+      const nextScore = score + 1;
+      setScore(nextScore);
+      playChime('success');
       setTimeout(() => speak('やったね！せいかい！', 0.9, 1.4), 200);
+      if (nextScore % 5 === 0) awardSticker && awardSticker('listen', `きいて ${nextScore}もん せいかい`);
       setTimeout(nextQuestion, 2200);
     } else {
       setResult('wrong'); playChime('gentle');
@@ -563,29 +881,34 @@ function ListenMode({ onBack }) {
 }
  
 // ======== はなしてみよう ========
-function SpeakMode({ onBack }) {
+function SpeakMode({ onBack, range, awardSticker }) {
+  const pool = NUMBERS.slice(0, range);
   const [idx, setIdx] = useState(0);
   const [stage, setStage] = useState('intro');
-  const current = NUMBERS[idx];
- 
+  const safeIdx = Math.min(idx, pool.length - 1);
+  const current = pool[safeIdx];
+
   useEffect(() => {
     setStage('intro');
     const t = setTimeout(() => speak(`${current.hira}　いっしょに いってみよう`, 0.8, 1.3), 400);
     return () => clearTimeout(t);
-  }, [idx]);
- 
+  }, [idx, range]);
+
   const playSample = () => { playChime('pop'); speak(current.hira, 0.75, 1.35); };
   const iSaidIt = () => {
     setStage('praised'); playChime('success');
     const praises = ['じょうずだね！', 'はなまる！', 'すごい すごい！', 'かんぺき！', 'やったね！'];
     speak(praises[Math.floor(Math.random() * praises.length)], 0.9, 1.4);
     setTimeout(() => {
-      if (idx < NUMBERS.length - 1) setIdx(i => i + 1);
-      else setTimeout(() => speak('ぜんぶ できたね！だいすき！', 0.85, 1.35), 800);
+      if (safeIdx < pool.length - 1) setIdx(i => i + 1);
+      else {
+        awardSticker && awardSticker('speak', `1〜${range} ぜんぶ いえた`);
+        setTimeout(() => speak('ぜんぶ できたね！だいすき！', 0.85, 1.35), 800);
+      }
     }, 2000);
   };
-  const skip = () => { setIdx(i => (i < NUMBERS.length - 1) ? i + 1 : 0); };
- 
+  const skip = () => { setIdx(i => (i < pool.length - 1) ? i + 1 : 0); };
+
   return (
     <div className="screen" style={{
       background: `linear-gradient(180deg, ${current.bgSoft} 0%, #FFF6D1 100%)`,
@@ -593,10 +916,10 @@ function SpeakMode({ onBack }) {
     }}>
       <BackButton onClick={onBack} />
       <div className="progress-dots">
-        {NUMBERS.map((n, i) => (
+        {pool.map((n, i) => (
           <div key={n.digit} className="progress-dot" style={{
-            width: i === idx ? '24px' : '8px',
-            background: i <= idx ? n.color : '#E0D8EC',
+            width: i === safeIdx ? '24px' : '8px',
+            background: i <= safeIdx ? n.color : '#E0D8EC',
           }} />
         ))}
       </div>
@@ -634,14 +957,16 @@ function SpeakMode({ onBack }) {
 }
  
 // ======== かいてみよう（なぞり書き） ========
-function WriteMode({ onBack }) {
+function WriteMode({ onBack, range, awardSticker }) {
+  const pool = NUMBERS.slice(0, range);
   const [idx, setIdx] = useState(0);
   const [done, setDone] = useState(false);
   const traceCanvasRef = useRef(null);
   const guideCanvasRef = useRef(null);
   const drawingRef = useRef(false);
   const lastPointRef = useRef(null);
-  const current = NUMBERS[idx];
+  const safeIdx = Math.min(idx, pool.length - 1);
+  const current = pool[safeIdx];
  
   // ガイド（薄い数字）を描画
   const drawGuide = () => {
@@ -721,7 +1046,7 @@ function WriteMode({ onBack }) {
     setTimeout(() => { drawGuide(); initTraceCanvas(); clearTrace(); }, 50);
     setDone(false);
     setTimeout(() => speak(`${current.hira}　を かいてみよう`, 0.85, 1.3), 300);
-  }, [idx]);
+  }, [idx, range]);
  
   const getPos = (e) => {
     const canvas = traceCanvasRef.current;
@@ -766,23 +1091,24 @@ function WriteMode({ onBack }) {
     setDone(true); playChime('success');
     const praises = ['じょうずに かけたね！', 'はなまる！', 'すごい！', 'やったね！'];
     speak(praises[Math.floor(Math.random() * praises.length)], 0.9, 1.4);
+    awardSticker && awardSticker('write', `${current.digit} を かけた`);
     setTimeout(() => {
-      if (idx < NUMBERS.length - 1) setIdx(i => i + 1);
+      if (safeIdx < pool.length - 1) setIdx(i => i + 1);
       else setIdx(0);
     }, 2200);
   };
- 
-  const next = () => { setIdx(i => (i < NUMBERS.length - 1) ? i + 1 : 0); };
-  const prev = () => { setIdx(i => (i > 0) ? i - 1 : NUMBERS.length - 1); };
- 
+
+  const next = () => { setIdx(i => (i < pool.length - 1) ? i + 1 : 0); };
+  const prev = () => { setIdx(i => (i > 0) ? i - 1 : pool.length - 1); };
+
   return (
     <div className="screen write-bg">
       <BackButton onClick={onBack} />
       <div className="progress-dots">
-        {NUMBERS.map((n, i) => (
+        {pool.map((n, i) => (
           <div key={n.digit} className="progress-dot" style={{
-            width: i === idx ? '24px' : '8px',
-            background: i <= idx ? n.color : '#E0D8EC',
+            width: i === safeIdx ? '24px' : '8px',
+            background: i <= safeIdx ? n.color : '#E0D8EC',
           }} />
         ))}
       </div>
@@ -839,34 +1165,402 @@ function WriteMode({ onBack }) {
   );
 }
  
+// ======== くらべっこ ========
+function CompareMode({ onBack, range, awardSticker }) {
+  const [pair, setPair] = useState(null);
+  const [result, setResult] = useState(null);
+  const [score, setScore] = useState(0);
+
+  const pickPair = () => {
+    const max = Math.max(2, range);
+    let a = 1 + Math.floor(Math.random() * max);
+    let b = 1 + Math.floor(Math.random() * max);
+    while (b === a) b = 1 + Math.floor(Math.random() * max);
+    setPair({ a, b });
+    setResult(null);
+    setTimeout(() => speak('どっちが おおい かな？', 0.85, 1.3), 300);
+  };
+  useEffect(() => { pickPair(); }, [range]);
+
+  const pick = (chosen) => {
+    if (result) return;
+    const big = Math.max(pair.a, pair.b);
+    if (chosen === big) {
+      setResult('correct');
+      const nextScore = score + 1;
+      setScore(nextScore);
+      playChime('success');
+      setTimeout(() => speak(`${NUMBERS[big - 1].hira} の ほうが おおい！せいかい！`, 0.9, 1.35), 200);
+      if (nextScore % 5 === 0) awardSticker && awardSticker('compare', `くらべっこ ${nextScore}もん`);
+      setTimeout(pickPair, 2400);
+    } else {
+      setResult('wrong'); playChime('gentle');
+      setTimeout(() => speak('もういちど みてみよう', 0.85, 1.3), 200);
+      setTimeout(() => setResult(null), 1400);
+    }
+  };
+
+  const renderDots = (n) => {
+    const maxShow = Math.min(n, 20);
+    return Array.from({ length: maxShow }, (_, i) => (
+      <span key={i} className="compare-dot">🐰</span>
+    )).concat(n > maxShow ? [<span key="plus" className="compare-dot" style={{fontSize:'0.9rem', color:'#7A6B94', fontWeight:900}}>+{n - maxShow}</span>] : []);
+  };
+
+  if (!pair) return null;
+  const big = Math.max(pair.a, pair.b);
+
+  return (
+    <div className="screen compare-bg">
+      <BackButton onClick={onBack} />
+      <div className="score-badge"><span>⭐</span><span>{score}</span></div>
+      <h2 className="title" style={{ fontSize: '1.3rem', marginTop: '8px' }}>⚖️ どっちが おおい？</h2>
+      <div className="flex-col-center" style={{ marginTop: '8px' }}>
+        <div style={{ animation: result === 'correct' ? 'cheer 0.6s ease-in-out 3' : 'floaty 2.5s ease-in-out infinite' }}>
+          <Rabbit mood={result === 'correct' ? 'wow' : 'happy'} size={88} />
+        </div>
+      </div>
+      <div className="compare-grid">
+        {[pair.a, pair.b].map((n, i) => {
+          const isWinner = result === 'correct' && n === big;
+          const isLoser  = result === 'correct' && n !== big;
+          return (
+            <button key={i} className={'compare-card' + (isWinner ? ' winner' : isLoser ? ' loser' : '')}
+              onClick={() => pick(n)} disabled={!!result}
+              style={{ background: NUMBERS[n - 1].bgSoft, animationDelay: `${i * 0.1}s` }}>
+              <div className="compare-digit" style={{ color: NUMBERS[n - 1].color }}>{n}</div>
+              <div style={{ fontWeight: 900, fontSize: '0.95rem', color: '#3A3052' }}>{NUMBERS[n - 1].hira}</div>
+              <div className="compare-dots">{renderDots(n)}</div>
+            </button>
+          );
+        })}
+      </div>
+      <Sparkles show={result === 'correct'} />
+    </div>
+  );
+}
+
+// ======== けいさん ========
+function MathMode({ onBack, range, awardSticker }) {
+  const [question, setQuestion] = useState(null);
+  const [choices, setChoices] = useState([]);
+  const [result, setResult] = useState(null);
+  const [score, setScore] = useState(0);
+
+  const pickQuestion = () => {
+    const limit = Math.min(range, 20);
+    const op = Math.random() < 0.5 ? '+' : '-';
+    let a, b, ans;
+    if (op === '+') {
+      const total = 2 + Math.floor(Math.random() * (limit - 1));
+      a = 1 + Math.floor(Math.random() * (total - 1));
+      b = total - a;
+      ans = total;
+    } else {
+      a = 2 + Math.floor(Math.random() * (limit - 1));
+      b = 1 + Math.floor(Math.random() * (a - 1));
+      ans = a - b;
+    }
+    const distractSet = new Set();
+    while (distractSet.size < 2) {
+      const delta = (Math.random() < 0.5 ? -1 : 1) * (1 + Math.floor(Math.random() * 3));
+      const d = ans + delta;
+      if (d >= 0 && d !== ans && d <= limit) distractSet.add(d);
+    }
+    const opts = [ans, ...Array.from(distractSet)].sort(() => Math.random() - 0.5);
+    setQuestion({ a, b, op, ans });
+    setChoices(opts);
+    setResult(null);
+    const opSpeak = op === '+' ? 'たす' : 'ひく';
+    setTimeout(() => speak(`${NUMBERS[a-1].hira}　${opSpeak}　${NUMBERS[b-1].hira}　は？`, 0.8, 1.3), 300);
+  };
+  useEffect(() => { pickQuestion(); }, [range]);
+
+  const pick = (v) => {
+    if (result) return;
+    if (v === question.ans) {
+      setResult('correct');
+      const nextScore = score + 1;
+      setScore(nextScore);
+      playChime('success');
+      setTimeout(() => speak(`${NUMBERS[question.ans - 1].hira}！せいかい！`, 0.9, 1.4), 200);
+      if (nextScore % 5 === 0) awardSticker && awardSticker('math', `けいさん ${nextScore}もん`);
+      setTimeout(pickQuestion, 2200);
+    } else {
+      setResult('wrong'); playChime('gentle');
+      setTimeout(() => speak('もういちど かんがえてみよう', 0.85, 1.3), 200);
+      setTimeout(() => setResult(null), 1400);
+    }
+  };
+
+  if (!question) return null;
+  const { a, b, op } = question;
+  const picA = Array.from({ length: Math.min(a, 12) }, (_, i) => <span key={i} className="math-pic">🐰</span>);
+  const picB = Array.from({ length: Math.min(b, 12) }, (_, i) => <span key={i} className="math-pic">🥕</span>);
+
+  return (
+    <div className="screen math-bg">
+      <BackButton onClick={onBack} />
+      <div className="score-badge"><span>⭐</span><span>{score}</span></div>
+      <h2 className="title" style={{ fontSize: '1.3rem', marginTop: '8px' }}>
+        ➕ {op === '+' ? 'たしざん' : 'ひきざん'}
+      </h2>
+      <div className="math-equation">
+        <span>{a}</span>
+        <span className="math-op">{op}</span>
+        <span>{b}</span>
+        <span className="math-op">=</span>
+        <span style={{ color: result === 'correct' ? '#4A8A2A' : '#B8B5FF' }}>？</span>
+      </div>
+      <div className="math-pic-row">
+        <div className="math-pic-group">{picA}{a > 12 && <span style={{fontWeight:900, color:'#7A6B94'}}>+{a-12}</span>}</div>
+        <div className="math-op" style={{ fontSize: '2.2rem' }}>{op}</div>
+        <div className="math-pic-group">{picB}{b > 12 && <span style={{fontWeight:900, color:'#7A6B94'}}>+{b-12}</span>}</div>
+      </div>
+      <div className="choices-grid" style={{ marginTop: '16px' }}>
+        {choices.map((c, i) => {
+          const isCorrect = result === 'correct' && c === question.ans;
+          const isWrong = result === 'wrong' && c !== question.ans;
+          return (
+            <button key={c + '-' + i} className="choice-btn"
+              onClick={() => pick(c)} disabled={!!result}
+              style={{
+                background: isCorrect ? '#B8E986' : '#fff',
+                opacity: isWrong ? 0.5 : 1,
+                animationDelay: `${i * 0.08}s`,
+              }}>
+              <div className="choice-digit">{c}</div>
+              <div className="choice-hira">{NUMBERS[c - 1] ? NUMBERS[c - 1].hira : 'ぜろ'}</div>
+            </button>
+          );
+        })}
+      </div>
+      <Sparkles show={result === 'correct'} />
+    </div>
+  );
+}
+
+// ======== かぞえかた（助数詞） ========
+function CounterMode({ onBack, awardSticker }) {
+  const [cIdx, setCIdx] = useState(0);
+  const [count, setCount] = useState(1);
+  const [done, setDone] = useState(false);
+  const counter = COUNTERS[cIdx];
+  const reading = counter.forms[Math.min(count, counter.forms.length) - 1];
+
+  useEffect(() => {
+    setCount(1); setDone(false);
+  }, [cIdx]);
+
+  const sayIt = () => { playChime('pop'); speak(reading, 0.8, 1.35); };
+  const up = () => {
+    if (count >= 10) return;
+    const n = count + 1;
+    setCount(n);
+    playChime('pop');
+    setTimeout(() => speak(counter.forms[n - 1], 0.8, 1.35), 60);
+    if (n === 10 && !done) {
+      setDone(true);
+      setTimeout(() => {
+        playChime('success');
+        speak(`${counter.label} じゅっこまで いえたね！`, 0.85, 1.3);
+        awardSticker && awardSticker('counter', `${counter.label} 10まで`);
+      }, 900);
+    }
+  };
+  const down = () => {
+    if (count <= 1) return;
+    const n = count - 1;
+    setCount(n);
+    playChime('pop');
+    setTimeout(() => speak(counter.forms[n - 1], 0.8, 1.35), 60);
+  };
+
+  const items = Array.from({ length: count }, (_, i) => (
+    <span key={i} className="counter-item">{counter.emoji}</span>
+  ));
+
+  return (
+    <div className="screen counter-bg">
+      <BackButton onClick={onBack} />
+      <h2 className="title" style={{ fontSize: '1.3rem', marginTop: '8px' }}>🐰 かぞえかた</h2>
+      <p className="subtitle" style={{ fontSize: '0.85rem', marginTop: '4px' }}>
+        ものによって かぞえかたが ちがうよ
+      </p>
+      <div className="counter-tabs">
+        {COUNTERS.map((c, i) => (
+          <button key={c.id}
+            className={'counter-tab' + (i === cIdx ? ' active' : '')}
+            onClick={() => { playChime('pop'); setCIdx(i); }}
+            style={{ background: i === cIdx ? c.color : '#fff' }}>
+            {c.emoji} {c.label}
+          </button>
+        ))}
+      </div>
+      <div className="counter-stage" style={{ background: counter.bgSoft }}>
+        <div style={{ textAlign: 'center', fontWeight: 900, fontSize: '0.9rem', color: '#7A6B94' }}>
+          {counter.reading}
+        </div>
+        <div className="counter-items">{items}</div>
+        <button onClick={sayIt} style={{
+          display: 'block', margin: '4px auto 0',
+          padding: '6px 18px', borderRadius: '999px',
+          background: '#fff', border: '3px solid #3A3052', boxShadow: '0 3px 0 #3A3052',
+          fontWeight: 900, fontSize: '0.85rem', color: '#3A3052',
+        }}>🔊 きく</button>
+        <div className="counter-reading" style={{ marginTop: '8px' }}>{reading}</div>
+        <div className="counter-stepper">
+          <button className="counter-step-btn" onClick={down} disabled={count <= 1}>−</button>
+          <div style={{ fontFamily: 'Fredoka, sans-serif', fontSize: '2.6rem', fontWeight: 700, color: counter.color }}>
+            {count}
+          </div>
+          <button className="counter-step-btn" onClick={up} disabled={count >= 10}>＋</button>
+        </div>
+      </div>
+      <Sparkles show={done} />
+    </div>
+  );
+}
+
+// ======== シールちょう ========
+function StickerBook({ onBack, stickers, setStickers }) {
+  const fileInputRef = useRef(null);
+
+  const doExport = async () => {
+    playChime('pop');
+    const all = await dbAll();
+    const blob = new Blob([JSON.stringify(all, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    const date = new Date().toISOString().slice(0, 10);
+    a.href = url; a.download = `suuji-no-mori-${date}.json`;
+    document.body.appendChild(a); a.click();
+    setTimeout(() => { URL.revokeObjectURL(url); a.remove(); }, 100);
+  };
+
+  const onImportFile = (e) => {
+    const file = e.target.files && e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = async () => {
+      try {
+        const data = JSON.parse(reader.result);
+        const imported = data && Array.isArray(data.stickers) ? data.stickers : null;
+        if (!imported) { alert('このファイルは よみこめません'); return; }
+        if (!confirm(`${imported.length}まいの シールを よみこみます。いまの きろくに うわがきします。`)) return;
+        setStickers(imported);
+        if (typeof data.range === 'number') await dbSet('range', data.range);
+        playChime('success');
+        speak('よみこみ できたよ', 0.9, 1.35);
+      } catch (err) {
+        alert('ファイルが こわれているみたい');
+      }
+    };
+    reader.readAsText(file);
+    e.target.value = '';
+  };
+
+  const clearAll = () => {
+    if (!confirm('ぜんぶの シールを けしますか？')) return;
+    setStickers([]);
+    playChime('gentle');
+  };
+
+  return (
+    <div className="screen stickers-bg">
+      <BackButton onClick={onBack} />
+      <h2 className="title" style={{ fontSize: '1.5rem', marginTop: '8px' }}>🎖 シールちょう</h2>
+      <p className="subtitle" style={{ fontSize: '0.9rem', marginTop: '4px' }}>
+        {stickers.length > 0 ? `${stickers.length}まい あつめたよ！` : 'あそんで シールを あつめよう'}
+      </p>
+      <div className="sticker-grid">
+        {stickers.length === 0 ? (
+          <div className="sticker-empty">まだ シールが ないよ 🐰</div>
+        ) : (
+          stickers.slice().reverse().map((s, i) => (
+            <div key={s.id} className="sticker-cell"
+              title={s.label}
+              style={{
+                background: PALETTE[i % PALETTE.length].bgSoft,
+                animationDelay: `${Math.min(i * 0.02, 0.5)}s`,
+              }}>
+              {s.emoji}
+            </div>
+          ))
+        )}
+      </div>
+      <div className="backup-btns">
+        <button className="backup-btn" onClick={doExport}>💾 ほぞん（ファイル）</button>
+        <button className="backup-btn" onClick={() => fileInputRef.current && fileInputRef.current.click()}>
+          📂 よみこみ
+        </button>
+        <button className="backup-btn" onClick={clearAll} style={{ color: '#B55' }}>🗑 ぜんぶ けす</button>
+      </div>
+      <p style={{ fontWeight: 700, fontSize: '0.75rem', color: '#9A8DB4', textAlign: 'center', marginTop: '10px', padding: '0 20px' }}>
+        ※ きろくは このタブレット/スマホの なかに ほぞんされます。<br />
+        スマホを かえる ときは 「ほぞん」で ファイルに しておけば あんしん！
+      </p>
+      <input ref={fileInputRef} type="file" accept="application/json"
+        onChange={onImportFile} style={{ display: 'none' }} />
+    </div>
+  );
+}
+
 // ======== メイン ========
 function App() {
   const [mode, setMode] = useState('home');
- 
+  const [range, setRangeRaw, rangeLoaded] = useStored('range', 10);
+  const [stickers, setStickersRaw] = useStored('stickers', []);
+
+  const setRange = (r) => setRangeRaw(r);
+  const setStickers = (next) => setStickersRaw(next);
+  const awardSticker = (kind, label) => {
+    const s = makeSticker(kind, label);
+    setStickersRaw(prev => {
+      const next = prev.concat(s);
+      return next.length > 200 ? next.slice(next.length - 200) : next;
+    });
+  };
+
   useEffect(() => {
     loadJaVoice();
     if (window.speechSynthesis.onvoiceschanged !== undefined) {
       window.speechSynthesis.onvoiceschanged = loadJaVoice;
     }
-    // オーディオコンテクストのunlock（iOS対策）
     const unlock = () => {
       try { getCtx().resume(); } catch (e) {}
-      speak(' ', 1, 1); // voice warm-up
+      speak(' ', 1, 1);
       document.removeEventListener('touchstart', unlock);
       document.removeEventListener('click', unlock);
     };
     document.addEventListener('touchstart', unlock, { once: true });
     document.addEventListener('click', unlock, { once: true });
   }, []);
- 
+
+  if (!rangeLoaded) {
+    return (
+      <div className="screen home-bg flex-col-center" style={{ justifyContent: 'center' }}>
+        <div style={{ animation: 'floaty 2s ease-in-out infinite' }}>
+          <Rabbit mood="happy" size={100} />
+        </div>
+        <p style={{ fontWeight: 900, color: '#7A6B94', marginTop: '14px' }}>よみこみちゅう…</p>
+      </div>
+    );
+  }
+
+  const back = () => setMode('home');
   return (
     <>
-      {mode === 'home'   && <Home setMode={setMode} />}
-      {mode === 'count'  && <CountMode onBack={() => setMode('home')} />}
-      {mode === 'read'   && <ReadMode onBack={() => setMode('home')} />}
-      {mode === 'listen' && <ListenMode onBack={() => setMode('home')} />}
-      {mode === 'speak'  && <SpeakMode onBack={() => setMode('home')} />}
-      {mode === 'write'  && <WriteMode onBack={() => setMode('home')} />}
+      {mode === 'home'     && <Home setMode={setMode} range={range} setRange={setRange} stickerCount={stickers.length} />}
+      {mode === 'count'    && <CountMode   onBack={back} range={range} awardSticker={awardSticker} />}
+      {mode === 'read'     && <ReadMode    onBack={back} range={range} />}
+      {mode === 'listen'   && <ListenMode  onBack={back} range={range} awardSticker={awardSticker} />}
+      {mode === 'speak'    && <SpeakMode   onBack={back} range={range} awardSticker={awardSticker} />}
+      {mode === 'write'    && <WriteMode   onBack={back} range={range} awardSticker={awardSticker} />}
+      {mode === 'compare'  && <CompareMode onBack={back} range={range} awardSticker={awardSticker} />}
+      {mode === 'math'     && <MathMode    onBack={back} range={range} awardSticker={awardSticker} />}
+      {mode === 'counter'  && <CounterMode onBack={back} awardSticker={awardSticker} />}
+      {mode === 'stickers' && <StickerBook onBack={back} stickers={stickers} setStickers={setStickers} />}
     </>
   );
 }
