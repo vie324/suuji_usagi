@@ -354,15 +354,46 @@ const NUMBERS = Array.from({ length: 100 }, (_, i) => {
  
 // ======== 音声 ========
 let jaVoice = null;
+// 女性・キャラクター寄りの声を優先して選ぶ
+const FEMALE_VOICE_HINTS = [
+  'kyoko',            // macOS / iOS 日本語女性
+  'o-ren',            // macOS 追加音声
+  'haruka', 'ayumi', 'sayaka', 'nanami', 'mizuki', 'ichie', // Windows / Edge 日本語女性
+  'google 日本語',     // Android / Chrome
+  'ja-jp-standard-a', 'ja-jp-standard-b',        // Google Cloud（女性）
+  'ja-jp-wavenet-a',  'ja-jp-wavenet-b',
+  'ja-jp-neural2-b',
+  'female', 'woman', '女', 'じょせい',
+];
+const MALE_VOICE_HINTS = [
+  'otoya', 'ichiro', 'hattori', 'takumi',
+  'ja-jp-standard-c', 'ja-jp-standard-d',
+  'ja-jp-wavenet-c',  'ja-jp-wavenet-d',
+  'male', 'man', '男', 'だんせい',
+];
 function loadJaVoice() {
   const voices = window.speechSynthesis.getVoices();
-  jaVoice = voices.find(v => v.lang === 'ja-JP') || voices.find(v => v.lang.startsWith('ja')) || null;
+  const ja = voices.filter(v => v.lang === 'ja-JP' || (v.lang || '').toLowerCase().startsWith('ja'));
+  if (ja.length === 0) { jaVoice = null; return; }
+  const lower = (v) => (v.name + ' ' + (v.voiceURI || '')).toLowerCase();
+  // 1) 女性ヒントに一致する声を優先順で探す
+  for (const hint of FEMALE_VOICE_HINTS) {
+    const hit = ja.find(v => lower(v).includes(hint));
+    if (hit) { jaVoice = hit; return; }
+  }
+  // 2) 男性ヒントを含まないものを選ぶ
+  const nonMale = ja.find(v => !MALE_VOICE_HINTS.some(h => lower(v).includes(h)));
+  jaVoice = nonMale || ja[0];
 }
-function speak(text, rate = 0.85, pitch = 1.3) {
+function speak(text, rate = 0.9, pitch = 1.45) {
   if (!('speechSynthesis' in window)) return;
   window.speechSynthesis.cancel();
   const u = new SpeechSynthesisUtterance(text);
-  u.lang = 'ja-JP'; u.rate = rate; u.pitch = pitch;
+  u.lang = 'ja-JP';
+  u.rate = rate;
+  // キャラクターっぽく可愛い高さに底上げ（SpeechSynthesis の上限 2.0）
+  u.pitch = Math.min(2, pitch * 1.25);
+  u.volume = 1;
   if (jaVoice) u.voice = jaVoice;
   window.speechSynthesis.speak(u);
 }
