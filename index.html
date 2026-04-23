@@ -233,6 +233,40 @@
   .math-pic { font-size: 1.4rem; line-height: 1.1; }
   .math-op { font-size: 2.8rem; font-weight: 900; color: #FF6B9D; }
 
+  /* ===== おはなし もんだい ===== */
+  .story-bg { background: linear-gradient(180deg, #FFE8F3 0%, #FFF6D1 100%); }
+  .story-card {
+    background: rgba(255,255,255,0.88);
+    border: 4px dashed #D89AB0;
+    border-radius: 24px;
+    padding: 14px 18px;
+    max-width: 440px;
+    margin: 10px auto 6px;
+    font-weight: 700;
+    font-size: 1.02rem;
+    line-height: 1.7;
+    color: #3A3052;
+    text-align: left;
+  }
+  .story-emoji-row {
+    display: flex; flex-wrap: wrap; justify-content: center; align-items: center;
+    gap: 10px; margin: 6px auto 4px; max-width: 440px;
+  }
+  .story-emoji-group {
+    padding: 6px 10px; background: rgba(255,255,255,0.7);
+    border: 3px dashed #D89AB0; border-radius: 18px;
+    display: flex; flex-wrap: wrap; max-width: 160px; justify-content: center; gap: 2px;
+  }
+  .story-emoji { font-size: 1.5rem; line-height: 1.1; }
+  .story-replay-btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: #FFD166; border: 3px solid #3A3052; border-radius: 999px;
+    padding: 8px 18px; font-weight: 900; font-size: 0.9rem; color: #3A3052;
+    box-shadow: 0 4px 0 #3A3052; cursor: pointer; margin: 4px auto;
+    font-family: inherit;
+  }
+  .story-replay-btn:active { transform: translateY(3px); box-shadow: 0 1px 0 #3A3052; }
+
   /* ===== かぞえかた ===== */
   .counter-bg { background: linear-gradient(180deg, #E5E3FF 0%, #FFE8F3 100%); }
   .counter-tabs {
@@ -649,6 +683,7 @@ function Home({ setMode, range, setRange, stickerCount }) {
     { id: 'write',   label: 'かいてみよう',   emoji: '✏️', color: '#E0A8E8', desc: 'ゆびで なぞろう' },
     { id: 'compare', label: 'くらべっこ',     emoji: '⚖️', color: '#8EE1C8', desc: 'どっちが おおい？' },
     { id: 'math',    label: 'けいさん',       emoji: '➕', color: '#FFCBA4', desc: 'たしざん ひきざん' },
+    { id: 'story',   label: 'おはなし',       emoji: '🧸', color: '#FFA8B8', desc: 'よんで かんがえよう' },
     { id: 'counter', label: 'かぞえかた',     emoji: '🐰', color: '#B8B5FF', desc: '1ぴき、2ひき…' },
   ];
   return (
@@ -1371,6 +1406,136 @@ function MathMode({ onBack, range, awardSticker }) {
   );
 }
 
+// ======== おはなし もんだい ========
+const STORIES = [
+  {
+    text: 'ひまりちゃんは りんごを 5つ もって います。おかあさんに 2つ たべられて しまいました。のこりは いくつでしょう？',
+    emoji: '🍎', a: 5, b: 2, op: '-', ans: 3,
+  },
+  {
+    text: 'ひまりちゃんは いちごを 3つ もって います。おとうさんから 2つ もらいました。ぜんぶで いくつでしょう？',
+    emoji: '🍓', a: 3, b: 2, op: '+', ans: 5,
+  },
+  {
+    text: 'ひまりちゃんは こうえんで どんぐりを 4つ ひろいました。もう 3つ ひろいました。ぜんぶで いくつでしょう？',
+    emoji: '🌰', a: 4, b: 3, op: '+', ans: 7,
+  },
+  {
+    text: 'ひまりちゃんは あめを 6つ もって います。いもうとに 2つ あげました。のこりは いくつでしょう？',
+    emoji: '🍬', a: 6, b: 2, op: '-', ans: 4,
+  },
+  {
+    text: 'ひまりちゃんは ふうせんを 4つ もって います。1つ そらに とんで いって しまいました。のこりは いくつでしょう？',
+    emoji: '🎈', a: 4, b: 1, op: '-', ans: 3,
+  },
+];
+
+function StoryMode({ onBack, awardSticker }) {
+  const [idx, setIdx] = useState(() => Math.floor(Math.random() * STORIES.length));
+  const [choices, setChoices] = useState([]);
+  const [result, setResult] = useState(null);
+  const [score, setScore] = useState(0);
+
+  const story = STORIES[idx];
+
+  const buildChoices = (ans) => {
+    const distractSet = new Set();
+    let guard = 0;
+    while (distractSet.size < 2 && guard++ < 50) {
+      const delta = (Math.random() < 0.5 ? -1 : 1) * (1 + Math.floor(Math.random() * 3));
+      const d = ans + delta;
+      if (d >= 0 && d <= 10 && d !== ans) distractSet.add(d);
+    }
+    return [ans, ...Array.from(distractSet)].sort(() => Math.random() - 0.5);
+  };
+
+  const readStory = (s) => speak(s.text, 0.7, 1.3);
+
+  const nextProblem = () => {
+    let nextIdx = idx;
+    if (STORIES.length > 1) {
+      while (nextIdx === idx) nextIdx = Math.floor(Math.random() * STORIES.length);
+    }
+    const nextStory = STORIES[nextIdx];
+    setIdx(nextIdx);
+    setChoices(buildChoices(nextStory.ans));
+    setResult(null);
+    setTimeout(() => readStory(nextStory), 350);
+  };
+
+  useEffect(() => {
+    setChoices(buildChoices(story.ans));
+    setTimeout(() => readStory(story), 400);
+  }, []);
+
+  const replay = () => { playChime('pop'); readStory(story); };
+
+  const pick = (v) => {
+    if (result) return;
+    if (v === story.ans) {
+      setResult('correct');
+      const nextScore = score + 1;
+      setScore(nextScore);
+      playChime('success');
+      setTimeout(() => speak(`${NUMBERS[story.ans - 1].hira}！せいかい！`, 0.9, 1.4), 200);
+      if (nextScore % 5 === 0) awardSticker && awardSticker('story', `おはなし ${nextScore}もん`);
+      setTimeout(nextProblem, 2500);
+    } else {
+      setResult('wrong');
+      playChime('gentle');
+      setTimeout(() => speak('もういちど かんがえてみよう', 0.85, 1.3), 200);
+      setTimeout(() => setResult(null), 1400);
+    }
+  };
+
+  const picA = Array.from({ length: Math.min(story.a, 10) }, (_, i) => (
+    <span key={i} className="story-emoji">{story.emoji}</span>
+  ));
+  const picB = Array.from({ length: Math.min(story.b, 10) }, (_, i) => (
+    <span key={i} className="story-emoji">{story.emoji}</span>
+  ));
+
+  return (
+    <div className="screen story-bg">
+      <BackButton onClick={onBack} />
+      <div className="score-badge"><span>⭐</span><span>{score}</span></div>
+      <h2 className="title" style={{ fontSize: '1.3rem', marginTop: '8px' }}>
+        🧸 おはなし もんだい
+      </h2>
+      <div className="story-card">{story.text}</div>
+      <div className="story-emoji-row">
+        <div className="story-emoji-group">{picA}</div>
+        <div className="math-op" style={{ fontSize: '2rem' }}>{story.op === '+' ? '+' : '−'}</div>
+        <div className="story-emoji-group">{picB}</div>
+      </div>
+      <div style={{ textAlign: 'center' }}>
+        <button className="story-replay-btn" onClick={replay} disabled={!!result}>
+          🔊 もういちど きく
+        </button>
+      </div>
+      <div className="choices-grid" style={{ marginTop: '14px' }}>
+        {choices.map((c, i) => {
+          const isCorrect = result === 'correct' && c === story.ans;
+          const isWrong = result === 'wrong' && c !== story.ans;
+          return (
+            <button key={c + '-' + i} className="choice-btn"
+              onClick={() => pick(c)} disabled={!!result}
+              style={{
+                background: isCorrect ? '#B8E986' : '#fff',
+                opacity: isWrong ? 0.5 : 1,
+                animationDelay: `${i * 0.08}s`,
+              }}>
+              <div className="choice-digit">{c}</div>
+              <div className="choice-hira">{NUMBERS[c - 1] ? NUMBERS[c - 1].hira : 'ぜろ'}</div>
+            </button>
+          );
+        })}
+      </div>
+      <Sparkles show={result === 'correct'} />
+    </div>
+  );
+}
+
 // ======== かぞえかた（助数詞） ========
 function CounterMode({ onBack, awardSticker }) {
   const [cIdx, setCIdx] = useState(0);
@@ -1590,6 +1755,7 @@ function App() {
       {mode === 'write'    && <WriteMode   onBack={back} range={range} awardSticker={awardSticker} />}
       {mode === 'compare'  && <CompareMode onBack={back} range={range} awardSticker={awardSticker} />}
       {mode === 'math'     && <MathMode    onBack={back} range={range} awardSticker={awardSticker} />}
+      {mode === 'story'    && <StoryMode   onBack={back} awardSticker={awardSticker} />}
       {mode === 'counter'  && <CounterMode onBack={back} awardSticker={awardSticker} />}
       {mode === 'stickers' && <StickerBook onBack={back} stickers={stickers} setStickers={setStickers} />}
     </>
